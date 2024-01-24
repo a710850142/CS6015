@@ -1,0 +1,3 @@
+/Users/xxy/Desktop/cs6015 hw2/cmake-build-debug/CMakeFiles/cs6015_hw2.dir
+/Users/xxy/Desktop/cs6015 hw2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/xxy/Desktop/cs6015 hw2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
