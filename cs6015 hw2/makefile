@@ -1,34 +1,17 @@
-CXX=c++
-CFLAGS=-std=c++17
-CXXSOURCE=main.cpp cmdline.cpp expr.cpp
-OBJS=$(CXXSOURCE:.cpp=.o)
-HEADERS=cmdline.h expr.h catch.h
-
-.PHONY: all
+CXX = g++
+CXXFLAGS = -std=c++11
+CXXSOURCE = ${wildcard *.cpp}
 
 all: msdscript
 
-msdscript: $(OBJS)
-	$(CXX) $(CFLAGS) $(OBJS) -o msdscript
+%.o: %.cpp %.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Add a rule for building .o files from .cpp source files
-%.o: %.cpp $(HEADERS)
-	$(CXX) $(CFLAGS) -c $< -o $@
+OBJECTS = $(CXXSOURCE:.cpp=.o)
 
-.PHONY: run
-
-run: msdscript
-	./msdscript
+msdscript: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o msdscript $(OBJECTS)
 
 .PHONY: clean
-
 clean:
 	rm -f *.o msdscript
-
-.PHONY: printM
-
-printM:
-	echo $(CXXSOURCE)
-	echo $(HEADERS)
-	echo $(CXX)
-	echo $(CFLAGS)
