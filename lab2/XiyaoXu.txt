@@ -1,0 +1,57 @@
+Script started on Thu Jan 25 19:22:21 2024
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004h[7mclang++ *.cpp  -o program[27m[25D[27mc[27ml[27ma[27mn[27mg[27m+[27m+[27m [27m*[27m.[27mc[27mp[27mp[27m [27m [27m-[27mo[27m [27mp[27mr[27mo[27mg[27mr[27ma[27mm[?2004l
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004h[7mls −l[27m[27ml[27ms[27m [27m−[27ml[?2004l
+ls: −l: No such file or directory
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004hlls -1[?2004l
+Department.cpp
+Department.h
+XiyaoXu.txt
+employeeClass.cpp
+employeeClass.h
+main.cpp
+program
+programmerClass.cpp
+programmerClass.h
+softwarearchitectClass.cpp
+softwarearchitectClass.h
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004h[7mls −l[27m[27ml[27ms[27m [27m−[27ml[?2004l
+ls: −l: No such file or directory
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004h[7mclang++ *.cpp -g -O0  -o program[27m[32D[27mc[27ml[27ma[27mn[27mg[27m+[27m+[27m [27m*[27m.[27mc[27mp[27mp[27m [27m-[27mg[27m [27m-[27mO[27m0[27m [27m [27m-[27mo[27m [27mp[27mr[27mo[27mg[27mr[27ma[27mm[?2004l
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004h[7mls −l[27m[27ml[27ms[27m [27m−[27ml[?2004l
+ls: −l: No such file or directory
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004hlls -l i l[?2004l
+total 584
+-rwxrwxrwx@ 1 xxy  staff    4128 Jan  4 16:52 Department.cpp
+-rwxrwxrwx@ 1 xxy  staff    1486 Oct  8  2018 Department.h
+-rw-r--r--  1 xxy  staff    2657 Jan 25 19:27 XiyaoXu.txt
+-rwxrwxrwx@ 1 xxy  staff    1018 Jan  4 16:59 employeeClass.cpp
+-rwxrwxrwx@ 1 xxy  staff     621 Jan  4 17:00 employeeClass.h
+-rwxrwxrwx@ 1 xxy  staff    5085 Jan  4 16:47 main.cpp
+-rwxr-xr-x  1 xxy  staff  247048 Jan 25 19:27 program
+drwxr-xr-x  3 xxy  staff      96 Jan 25 19:27 program.dSYM
+-rwxrwxrwx@ 1 xxy  staff     955 Mar 15  2018 programmerClass.cpp
+-rwxrwxrwx@ 1 xxy  staff     595 Mar 15  2018 programmerClass.h
+-rwxrwxrwx@ 1 xxy  staff    1072 Mar 15  2018 softwarearchitectClass.cpp
+-rwxrwxrwx@ 1 xxy  staff     633 Mar 15  2018 softwarearchitectClass.h
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004hlls -i[?2004l
+5233060 Department.cpp			5269052 program
+5233062 Department.h			5269057 program.dSYM
+5268408 XiyaoXu.txt			5233070 programmerClass.cpp
+5233064 employeeClass.cpp		5233072 programmerClass.h
+5233066 employeeClass.h			5233074 softwarearchitectClass.cpp
+5233068 main.cpp			5233076 softwarearchitectClass.h
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004h[7mls -l[27m[27ml[27ms[27m [27m-[27ml[?2004l
+total 592
+-rwxrwxrwx@ 1 xxy  staff    4128 Jan  4 16:52 Department.cpp
+-rwxrwxrwx@ 1 xxy  staff    1486 Oct  8  2018 Department.h
+-rw-r--r--  1 xxy  staff    4249 Jan 25 19:29 XiyaoXu.txt
+-rwxrwxrwx@ 1 xxy  staff    1018 Jan  4 16:59 employeeClass.cpp
+-rwxrwxrwx@ 1 xxy  staff     621 Jan  4 17:00 employeeClass.h
+-rwxrwxrwx@ 1 xxy  staff    5085 Jan  4 16:47 main.cpp
+-rwxr-xr-x  1 xxy  staff  247048 Jan 25 19:27 program
+drwxr-xr-x  3 xxy  staff      96 Jan 25 19:27 program.dSYM
+-rwxrwxrwx@ 1 xxy  staff     955 Mar 15  2018 programmerClass.cpp
+-rwxrwxrwx@ 1 xxy  staff     595 Mar 15  2018 programmerClass.h
+-rwxrwxrwx@ 1 xxy  staff    1072 Mar 15  2018 softwarearchitectClass.cpp
+-rwxrwxrwx@ 1 xxy  staff     633 Mar 15  2018 softwarearchitectClass.h
+[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/Desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004h

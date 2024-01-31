@@ -1,0 +1,30 @@
+
+
+# Define the compiler to use
+CXX = g++
+
+# Define the executable file name
+EXECUTABLE = program
+
+# Define source files (.cpp) and object files (.o)
+SOURCES = main.cpp Caps.cpp Clothing.cpp Pants.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
+
+# The default rule - building the executable
+build: $(EXECUTABLE)
+
+# Rule for linking the object files to create the executable
+$(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(EXECUTABLE)
+
+# Rule for compiling source files to object files
+%.o: %.cpp
+	$(CXX) -c $< -o $@
+
+# Rule for cleaning up generated files
+clean:
+	rm -f $(OBJECTS) $(EXECUTABLE)
+
+# Rule for running the executable
+run: $(EXECUTABLE)
+	./$(EXECUTABLE)
