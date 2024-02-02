@@ -1,11 +1,15 @@
-steps:
-  - name: Checkout v1
-    uses: actions/checkout@v1
-  - name: Print current directory
-    run: pwd
-  - name: List files
-    run: ls -la
-  - name: make file
-    run: make
-  - name: Run test
-    run: make test
+name: MSD
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout v1
+      uses: actions/checkout@v1
+
+    - name: Run test
+      run: make test
