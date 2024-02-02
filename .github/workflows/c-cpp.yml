@@ -1,0 +1,17 @@
+name: MSD
+
+on:
+  push:
+  
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout v1
+      uses: actions/checout@v1
+    - name: Run test
+      run: make test
+    
+    
