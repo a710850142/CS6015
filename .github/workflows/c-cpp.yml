@@ -3,9 +3,12 @@ on:
   push:  # 这里表示在 push 事件触发时运行该工作流
 jobs:
   build:
-    runs-on: macos-latest  # 指定运行环境为最新的 macOS
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout v1
-        uses: actions/checkout@v2  # 修正了拼写错误，并建议使用 v2 版本
-      - name: Run test
-        run: make test  # 运行测试
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up C++ environment
+      uses: actions/setup-cpp@v1
+    - name: Run tests
+      run: make test
+
