@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++11
-CXXSOURCE = ${wildcard *.cpp}
+CXXSOURCE = $(wildcard *.cpp)
 
 all: msdscript
 
@@ -12,6 +12,9 @@ OBJECTS = $(CXXSOURCE:.cpp=.o)
 msdscript: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o msdscript $(OBJECTS)
 
-.PHONY: clean
+.PHONY: clean test
 clean:
 	rm -f *.o msdscript
+
+test: msdscript
+	./msdscript --test
