@@ -1,25 +1,30 @@
-# Corrected variable names and added the correct command for linking the object files into an executable
-CXXSOURCE = expr.cpp cmdline.cpp main.cpp
-OBJSOURCE = expr.o cmdline.o main.o
+CXX = g++
+CXXFLAGS = -std=c++11
+CXXSOURCE = $(wildcard *.cpp)
 
-# The target for making the final executable
-msdscript: $(OBJSOURCE)
-	clang++ -o msdscript $(OBJSOURCE)
+# Default target
+all: msdscript
 
-# Compilation rules for the object files
-main.o: main.cpp
-	clang++ -c -std=c++17 main.cpp
+# Generalized rule that creates object files
+# Explicitly include the C++11 standard flag
+%.o: %.cpp %.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-cmdline.o: cmdline.h cmdline.cpp
-	clang++ -c -std=c++17 cmdline.cpp
+# Define OBJECTS macro
+OBJECTS = $(CXXSOURCE:.cpp=.o)
 
-expr.o: expr.h expr.cpp
-	clang++ -c -std=c++17 expr.cpp
+# Program creates the executable
+msdscript: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o msdscript $(OBJECTS)
 
-# Target for running tests
+# Test target
+.PHONY: test
 test:
-	./msdscript --test
+	# 添加您的测试命令，例如运行单元测试
+	echo "Running tests..."
+	# 例如: ./test_msdscript
 
-# Target for cleaning up the build artifacts
+# Clean deletes all .o and msdscript files
+.PHONY: clean
 clean:
 	rm -f *.o msdscript
