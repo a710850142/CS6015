@@ -1,4 +1,4 @@
-name: MSD Build and Test in hw3
+name: MSD Build and Test in hw
 
 on:
   push:
@@ -16,8 +16,8 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y g++
 
-    - name: Change to hw3 directory
-      run: cd hw3
+    - name: Change to hw directory
+      run: cd hw
 
     - name: Build project
       run: |
