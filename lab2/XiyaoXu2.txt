@@ -1,125 +1,0 @@
-Script started on Thu Jan 25 21:27:50 2024
-[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004hlls[?2004l
-CMakeLists.txt			main.cpp
-Department.cpp			program
-Department.h			program.dSYM
-XiyaoXu2.txt			programmerClass.cpp
-cmake-build-debug		programmerClass.h
-employeeClass.cpp		softwarearchitectClass.cpp
-employeeClass.h			softwarearchitectClass.h
-[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004hbb Department    ment.cpp:57[?2004l
-zsh: command not found: b
-[1m[7m%[27m[1m[0m                                                                                ]7;file://xuxiyaodeMacBook-Pro.local/Users/xxy/desktop/buggyCode[0m[27m[24m[Jxxy@xuxiyaodeMacBook-Pro buggyCode % [K[?2004hllldb progarm    gram[?2004l
-(lldb) target create "program"
-[2mLocating external symbol file for program...[0m[K[2K[2mLoading Apple DWARF index for program...[0m[K[2K[2mLocating external symbol file for dyld...[0m[K[2K[2mParsing symbol table for dyld...[0m[K[2K[2mLocating external symbol file for libc++.1.dylib...[0m[K[2K[2mParsing symbol table for libc++.1.dylib...[0m[K[2K[2mLocating external symbol file for libSystem.B.dylib...[0m[K[2K[2mParsing symbol table for libSystem.B.dylib...[0m[K[2K[2mLocating external symbol file for libc++abi.dylib...[0m[K[2K[2mParsing symbol table for libc++abi.dylib...[0m[K[2K[2mLocating external symbol file for libcache.dylib...[0m[K[2K[2mParsing symbol table for libcache.dylib...[0m[K[2K[2mLocating external symbol file for libcommonCrypto.dylib...[0m[K[2K[2mParsing symbol table for libcommonCrypto.dylib...[0m[K[2K[2mLocating external symbol file for libcompiler_rt.dylib...[0m[K[2K[2mParsing symbol table for libcompiler_rt.dylib...[0m[K[2K[2mLocating external symbol file for libcopyfile.dylib...[0m[K[2K[2mParsing symbol table for libcopyfile.dylib...[0m[K[2K[2mLocating external symbol file for libcorecrypto.dylib...[0m[K[2K[2mParsing symbol table for libcorecrypto.dylib...[0m[K[2K[2mLocating external symbol file for libdispatch.dylib...[0m[K[2K[2mParsing symbol table for libdispatch.dylib...[0m[K[2K[2mLocating external symbol file for libdyld.dylib...[0m[K[2K[2mParsing symbol table for libdyld.dylib...[0m[K[2K[2mLocating external symbol file for libkeymgr.dylib...[0m[K[2K[2mParsing symbol table for libkeymgr.dylib...[0m[K[2K[2mLocating external symbol file for libmacho.dylib...[0m[K[2K[2mParsing symbol table for libmacho.dylib...[0m[K[2K[2mLocating external symbol file for libquarantine.dylib...[0m[K[2K[2mParsing symbol table for libquarantine.dylib...[0m[K[2K[2mLocating external symbol file for libremovefile.dylib...[0m[K[2K[2mParsing symbol table for libremovefile.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_asl.dylib...[0m[K[2K[2mParsing symbol table for libsystem_asl.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_blocks.dylib...[0m[K[2K[2mParsing symbol table for libsystem_blocks.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_c.dylib...[0m[K[2K[2mParsing symbol table for libsystem_c.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_collections.dylib...[0m[K[2K[2mParsing symbol table for libsystem_collections.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_configuration.dylib...[0m[K[2K[2mParsing symbol table for libsystem_configuration.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_containermanager.dylib...[0m[K[2K[2mParsing symbol table for libsystem_containermanager.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_coreservices.dylib...[0m[K[2K[2mParsing symbol table for libsystem_coreservices.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_darwin.dylib...[0m[K[2K[2mParsing symbol table for libsystem_darwin.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_darwindirectory.dylib...[0m[K[2K[2mParsing symbol table for libsystem_darwindirectory.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_dnssd.dylib...[0m[K[2K[2mParsing symbol table for libsystem_dnssd.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_featureflags.dylib...[0m[K[2K[2mParsing symbol table for libsystem_featureflags.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_info.dylib...[0m[K[2K[2mParsing symbol table for libsystem_info.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_m.dylib...[0m[K[2K[2mParsing symbol table for libsystem_m.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_malloc.dylib...[0m[K[2K[2mParsing symbol table for libsystem_malloc.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_networkextension.dylib...[0m[K[2K[2mParsing symbol table for libsystem_networkextension.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_notify.dylib...[0m[K[2K[2mParsing symbol table for libsystem_notify.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_sandbox.dylib...[0m[K[2K[2mParsing symbol table for libsystem_sandbox.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_secinit.dylib...[0m[K[2K[2mParsing symbol table for libsystem_secinit.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_kernel.dylib...[0m[K[2K[2mParsing symbol table for libsystem_kernel.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_platform.dylib...[0m[K[2K[2mParsing symbol table for libsystem_platform.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_pthread.dylib...[0m[K[2K[2mParsing symbol table for libsystem_pthread.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_symptoms.dylib...[0m[K[2K[2mParsing symbol table for libsystem_symptoms.dylib...[0m[K[2K[2mLocating external symbol file for libsystem_trace.dylib...[0m[K[2K[2mParsing symbol table for libsystem_trace.dylib...[0m[K[2K[2mLocating external symbol file for libunwind.dylib...[0m[K[2K[2mParsing symbol table for libunwind.dylib...[0m[K[2K[2mLocating external symbol file for libxpc.dylib...[0m[K[2K[2mParsing symbol table for libxpc.dylib...[0m[K[2K[2mLocating external symbol file for libobjc.A.dylib...[0m[K[2K[2mParsing symbol table for libobjc.A.dylib...[0m[K[2K[2mLocating external symbol file for liboah.dylib...[0m[K[2K[2mParsing symbol table for liboah.dylib...[0m[K[2K[2mParsing symbol table for program...[0m[K[2KCurrent executable set to '/Users/xxy/desktop/buggyCode/program' (arm64).
-(lldb) [1G[2m(lldb) [0m[8Gb Department.cpp:57
-Breakpoint 1: where = program`Department::CalculateMaxSalary(Department::StaffTypes) + 560 at Department.cpp:57:23, address = 0x0000000100001c24
-(lldb) [1G[2m(lldb) [0m[8Grun
-Process 2050 launched: '/Users/xxy/desktop/buggyCode/program' (arm64)
-  Here is the List of all the Staff in the R&D Department: 
-  ------------------------------------------------------------
-   Name  ID          Title            Salary   Year Hired  Supervisor  ProjectID Prog.Lang. #Exp Years
-
-   Josh   1   Technology Specialist   3000.00      2015
-
-   Mary   2         Project Manager   5500.00      2010
-
-   Marc   3    Research Team Leader   8000.00      2007
-
-   Mike  11        Multimedia Prog.   2500.00      2014
-
-  Julie  12     Mainframe Sys.Prog.   2150.00      2013
-
- Albert  13                OS Prog.   2300.00      2015
-
-   John  21    Senior Software Eng.   4899.00      2011
-
- Connor  24      Software Developer   1900.00      2017
-  Here is the List of all the Staff in the IT Department: 
-  ------------------------------------------------------------
-   Name  ID          Title            Salary   Year Hired  Supervisor  ProjectID Prog.Lang. #Exp Years
-
-    Roy  32           Network Prog.   1900.00      2016
-
-   Jane  35                  Tester   1500.00      2018
-
- Removing Mike from the company: Succeeded
- -------------------------------
-   Name  ID          Title            Salary   Year Hired  Supervisor  ProjectID Prog.Lang. #Exp Years
-
-   Josh   1   Technology Specialist   3000.00      2015
-
-   Mary   2         Project Manager   5500.00      2010
-
-   Marc   3    Research Team Leader   8000.00      2007
-
-  Julie  12     Mainframe Sys.Prog.   2150.00      2013
-
- Albert  13                OS Prog.   2300.00      2015
-
-   John  21    Senior Software Eng.   4899.00      2011
-
- Connor  24      Software Developer   1900.00      2017
-
-  Here is the List of all the Programmers who know C++ in the R&D Department: 
-  ---------------------------------------------------------------------------
-   Name  ID          Title            Salary   Year Hired  Supervisor  ProjectID Prog.Lang. #Exp Years
-
-  Julie  12     Mainframe Sys.Prog.   2150.00      2013      Mary         5         C++
-
- Albert  13                OS Prog.   2300.00      2015      Mary         9         C++
-
- Listing All Project IDs:  5 9 6 8
--------------------------
-The Highest R&D Employee Salary is: 8000.00
-The Highest R&D Programmer Salary is: 2300.00
-Process 2050 stopped
-* thread #1, queue = [32m'com.apple.main-thread'[0m, stop reason = [31mbreakpoint 1.1[0m
-    frame #0: [33m0x0000000100001c24[0m program`Department::CalculateMaxSalary(this=0x000000016fdff320, type=SOFTWAREARCHITECTS) at [36mDepartment.cpp[0m:[33m57[0m:[33m23[0m
-[33m  [0m 54  				{
-[33m  [0m 55  	                max = SoftwareArchitects->at(i).getSalary();
-[33m  [0m 56  				}
-[33m->[0m 57  	                max = [4mSoftwareArchitects[0m->at(i).getSalary();
-[33m  [0m 58  			}
-[33m  [0m 59  			[32mbreak[0m;
-[33m  [0m 60  		[32mdefault[0m:
-Target 0: (program) stopped.
-(lldb) [1G[2m(lldb) [0m[8Gn
-Process 2050 stopped
-* thread #1, queue = [32m'com.apple.main-thread'[0m, stop reason = [31mstep over[0m
-    frame #0: [33m0x0000000100001c3c[0m program`Department::CalculateMaxSalary(this=0x000000016fdff320, type=SOFTWAREARCHITECTS) at [36mDepartment.cpp[0m:[33m58[0m:[33m3[0m
-[33m  [0m 55  	                max = SoftwareArchitects->at(i).getSalary();
-[33m  [0m 56  				}
-[33m  [0m 57  	                max = SoftwareArchitects->at(i).getSalary();
-[33m->[0m 58  			[4m}[0m
-[33m  [0m 59  			[32mbreak[0m;
-[33m  [0m 60  		[32mdefault[0m:
-[33m  [0m 61  			[32mbreak[0m;
-Target 0: (program) stopped.
-(lldb) [1G[2m(lldb) [0m[8Gn
-Process 2050 stopped
-* thread #1, queue = [32m'com.apple.main-thread'[0m, stop reason = [31mstep over[0m
-    frame #0: [33m0x0000000100001c40[0m program`Department::CalculateMaxSalary(this=0x000000016fdff320, type=SOFTWAREARCHITECTS) at [36mDepartment.cpp[0m:[33m50[0m:[33m48[0m
-[33m  [0m 47  			}
-[33m  [0m 48  	        [32mbreak[0m;
-[33m  [0m 49  		[32mcase[0m Department::SOFTWAREARCHITECTS:
-[33m->[0m 50  			[32mfor[0m (i = [31m0[0m; i < SoftwareArchitects->size(); i[4m++[0m)
-[33m  [0m 51  			{
-[33m  [0m 52  	
-[33m  [0m 53  				[32mif[0m (SoftwareArchitects->at(i).getSalary()>max)
-Target 0: (program) stopped.
-(lldb) [1G[2m(lldb) [0m[8Gfinish
-Process 2050 stopped
-* thread #1, queue = [32m'com.apple.main-thread'[0m, stop reason = [31mbreakpoint 1.1[0m
-    frame #0: [33m0x0000000100001c24[0m program`Department::CalculateMaxSalary(this=0x000000016fdff320, type=SOFTWAREARCHITECTS) at [36mDepartment.cpp[0m:[33m57[0m:[33m23[0m
-[33m  [0m 54  				{
-[33m  [0m 55  	                max = SoftwareArchitects->at(i).getSalary();
-[33m  [0m 56  				}
-[33m->[0m 57  	                max = [4mSoftwareArchitects[0m->at(i).getSalary();
-[33m  [0m 58  			}
-[33m  [0m 59  			[32mbreak[0m;
-[33m  [0m 60  		[32mdefault[0m:
-Target 0: (program) stopped.
-(lldb) [1G[2m(lldb) [0m[8Gquit
-Quitting LLDB will kill one or more processes. Do you really want to proceed: [Y /n] ls
-Quitting LLDB will kill one or more processes. Do you really want to proceed: [Y /n] 
