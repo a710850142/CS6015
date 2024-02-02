@@ -1,17 +1,25 @@
-CXX = g++
-CXXFLAGS = -std=c++11
-CXXSOURCE = ${wildcard *.cpp}
+# Corrected variable names and added the correct command for linking the object files into an executable
+CXXSOURCE = expr.cpp cmdline.cpp main.cpp
+OBJSOURCE = expr.o cmdline.o main.o
 
-all: msdscript
+# The target for making the final executable
+msdscript: $(OBJSOURCE)
+	clang++ -o msdscript $(OBJSOURCE)
 
-%.o: %.cpp %.h
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Compilation rules for the object files
+main.o: main.cpp
+	clang++ -c -std=c++17 main.cpp
 
-OBJECTS = $(CXXSOURCE:.cpp=.o)
+cmdline.o: cmdline.h cmdline.cpp
+	clang++ -c -std=c++17 cmdline.cpp
 
-msdscript: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o msdscript $(OBJECTS)
+expr.o: expr.h expr.cpp
+	clang++ -c -std=c++17 expr.cpp
 
-.PHONY: clean
+# Target for running tests
+test:
+	./msdscript --test
+
+# Target for cleaning up the build artifacts
 clean:
 	rm -f *.o msdscript
