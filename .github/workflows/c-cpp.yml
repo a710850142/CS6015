@@ -7,8 +7,5 @@ jobs:
     steps:
       - name: Checkout v1
         uses: actions/checkout@v1
-      - name: make file
-        run: make
       - name: Run test
         run: make test
-
