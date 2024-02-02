@@ -3,9 +3,11 @@ on:
   push:
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout v1
-        uses: actions/checkout@v1
-      - name: Run test
-        run: make test
+    - uses: actions/checkout@v2
+    - name: Change to Makefile directory
+      working-directory: ./path/to/your/makefile
+    - name: Run make test
+      run: make test
+
