@@ -1,9 +1,7 @@
-# Macros
 CXX = g++
 CXXFLAGS = -std=c++11
 CXXSOURCE = ${wildcard *.cpp}
 
-# Default target
 all: msdscript
 
 %.o: %.cpp %.h
@@ -11,10 +9,8 @@ all: msdscript
 
 OBJECTS = $(CXXSOURCE:.cpp=.o)
 
-
 msdscript: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o msdscript $(OBJECTS)
-
 
 .PHONY: clean
 clean:
