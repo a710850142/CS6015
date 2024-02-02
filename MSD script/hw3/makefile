@@ -19,10 +19,8 @@ msdscript: $(OBJECTS)
 
 # Test target
 .PHONY: test
-test:
-	# 添加您的测试命令，例如运行单元测试
-	echo "Running tests..."
-	# 例如: ./test_msdscript
+test: msdscript
+	./msdscript --test
 
 # Clean deletes all .o and msdscript files
 .PHONY: clean
