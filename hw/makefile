@@ -1,28 +1,17 @@
 CXX = g++
 CXXFLAGS = -std=c++11
-CXXSOURCE = $(wildcard *.cpp)
+CXXSOURCE = ${wildcard *.cpp}
 
-# Default target
 all: msdscript
 
-# Generalized rule that creates object files
-# Explicitly include the C++11 standard flag
 %.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Define OBJECTS macro
 OBJECTS = $(CXXSOURCE:.cpp=.o)
 
-# Program creates the executable
 msdscript: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o msdscript $(OBJECTS)
 
-# Test target
-.PHONY: test
-test: msdscript
-	./msdscript --test
-
-# Clean deletes all .o and msdscript files
 .PHONY: clean
 clean:
 	rm -f *.o msdscript

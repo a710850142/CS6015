@@ -154,5 +154,110 @@ TEST_CASE("Substitution and Equality Checks") {
                   ->subst("x", new Add(new VarExpr("y"), new Num(7)))
                   ->equals(new Add(new VarExpr("y"), new Num(7))));
 }
+/** hw4 */
 
+// 测试基本表达式的漂亮打印
+// Test case for pretty printing basic expressions
+TEST_CASE("Pretty Printing Basic Expressions") {
+    std::stringstream ss;
+    Add add(new Num(1), new Mult(new Num(2), new Num(3)));
+
+    // 测试加法表达式的漂亮打印
+    // Section for testing pretty print of an addition expression
+    SECTION("Add expression pretty print") {
+        add.pretty_print(ss);
+        // 检查打印结果是否为 "1 + 2 * 3"，注意操作符间的空格和优先级处理
+        CHECK(ss.str() == "1 + 2 * 3"); // Check if the print result is "1 + 2 * 3", note the spaces between operators and precedence handling
+    }
+}
+
+// 测试复杂表达式的漂亮打印
+// Test case for pretty printing complex expressions
+TEST_CASE("Pretty Printing Complex Expressions") {
+    std::stringstream ss;
+    Add complexExpr(new Mult(new Add(new Num(1), new Num(2)), new Num(3)), new Num(4));
+
+    // 测试复杂表达式的漂亮打印
+    // Section for testing pretty print of a complex expression
+    SECTION("Complex expression pretty print") {
+        complexExpr.pretty_print(ss);
+        // 检查打印结果是否为 "(1 + 2) * 3 + 4"，注意优先级和必要的括号
+        CHECK(ss.str() == "(1 + 2) * 3 + 4"); // Check if the print result is "(1 + 2) * 3 + 4", note the precedence and necessary parentheses
+    }
+}
+
+// 测试数字和操作表达式的打印
+// Test case for printing of numbers and operation expressions
+TEST_CASE("Num and Operation Expression Printing") {
+    std::stringstream ss;
+    Num num(5);
+    Add add(new Num(3), new Num(4));
+    Mult mult(new Num(4), new Num(2));
+
+    // 测试数字打印和字符串转换
+    // Section for testing printing of a number and its string conversion
+    SECTION("Num print and to_string") {
+        num.print(ss);
+        CHECK(ss.str() == "5");
+        CHECK(num.to_string() == "5");
+    }
+
+        // 测试加法打印和字符串转换
+        // Section for testing printing of addition and its string conversion
+    SECTION("Add print and to_string") {
+        ss.str(""); // 清空 stringstream
+        add.print(ss);
+        CHECK(ss.str() == "(3 + 4)");
+        CHECK(add.to_string() == "(3 + 4)");
+    }
+
+        // 测试乘法打印和字符串转换
+        // Section for testing printing of multiplication and its string conversion
+    SECTION("Mult print and to_string") {
+        ss.str(""); // 清空 stringstream
+        mult.print(ss);
+        CHECK(ss.str() == "(4 * 2)");
+        CHECK(mult.to_string() == "(4 * 2)");
+    }
+}
+
+// 测试复杂表达式的打印
+// Test case for printing of complex expressions
+TEST_CASE("Complex Expression Printing") {
+    std::stringstream ss;
+    Add complexExpr(new Add(new Num(2), new Mult(new Num(3), new VarExpr("x"))), new Num(4));
+
+    // 测试复杂表达式的打印和字符串转换
+    // Section for testing printing of a complex expression and its string conversion
+    SECTION("Complex expression print and to_string") {
+        complexExpr.print(ss);
+        CHECK(ss.str() == "((2 + (3 * x)) + 4)");
+        CHECK(complexExpr.to_string() == "((2 + (3 * x)) + 4)");
+    }
+}
+
+// 测试在漂亮打印中的结合性
+// Test case for testing associativity in pretty printing
+TEST_CASE("Testing Associativity in Pretty Printing") {
+    std::stringstream ss;
+    Mult rightAssoc(new Num(2), new Mult(new Num(3), new Num(4))); // 2 * (3 * 4)
+    Mult leftAssoc(new Mult(new Num(2), new Num(3)), new Num(4)); // (2 * 3) * 4
+
+    // 测试右结合性的漂亮打印
+    // Section for testing right associative pretty printing
+    SECTION("Right Associative Pretty Printing") {
+        rightAssoc.pretty_print(ss);
+        // 检查打印结果是否为 "2 * 3 * 4"，不需要额外的括号
+        CHECK(ss.str() == "2 * 3 * 4"); // Check if the print result is "2 * 3 * 4", no extra parentheses needed
+    }
+
+    ss.str(""); // 清空 stringstream
+    // 测试左结合性的漂亮打印
+    // Section for testing left associative pretty printing
+    SECTION("Left Associative Pretty Printing") {
+        leftAssoc.pretty_print(ss);
+        // 检查打印结果是否为 "(2 * 3) * 4"，需要括号表明先算 2 * 3
+        CHECK(ss.str() == "(2 * 3) * 4"); // Check if the print result is "(2 * 3) * 4", parentheses needed to indicate 2 * 3 is calculated first
+    }
+}
 
