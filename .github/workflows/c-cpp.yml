@@ -1,30 +1,12 @@
-name: MSD Build and Test in hw
-
+name: MSD 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y g++
-
-    - name: Change to hw directory
-      run: cd hw
-
-    - name: Build project
-      run: |
-        cd hw
-        make all
-
-    - name: Run tests
-      run: |
-        cd hw
-        make test
+  push: 
+jobs: 
+  build: 
+    runs-on: macos-latest 
+    steps: 
+      - name: Checkout v1
+        uses: actions/checkout@v1 
+      - name: Run test 
+        run: make test 
+        working-directory: hw
