@@ -1,0 +1,91 @@
+\begin{theindex}
+
+  \item {Add}, \hyperpage{9}
+    \subitem {equals}, \hyperpage{9}
+    \subitem {has\_variable}, \hyperpage{9}
+    \subitem {interp}, \hyperpage{10}
+    \subitem {pretty\_print}, \hyperpage{10}
+    \subitem {pretty\_print\_at}, \hyperpage{10}
+    \subitem {print}, \hyperpage{10}
+    \subitem {subst}, \hyperpage{10}
+
+  \indexspace
+
+  \item {equals}
+    \subitem {Add}, \hyperpage{9}
+    \subitem {Mult}, \hyperpage{12}
+    \subitem {Num}, \hyperpage{13}
+    \subitem {VarExpr}, \hyperpage{15}
+  \item {Expr}, \hyperpage{11}
+
+  \indexspace
+
+  \item {has\_variable}
+    \subitem {Add}, \hyperpage{9}
+    \subitem {Mult}, \hyperpage{12}
+    \subitem {Num}, \hyperpage{13}
+    \subitem {VarExpr}, \hyperpage{15}
+
+  \indexspace
+
+  \item {interp}
+    \subitem {Add}, \hyperpage{10}
+    \subitem {Mult}, \hyperpage{12}
+    \subitem {Num}, \hyperpage{14}
+    \subitem {VarExpr}, \hyperpage{15}
+
+  \indexspace
+
+  \item {MSDScript}, \hyperpage{1}
+  \item {Mult}, \hyperpage{11}
+    \subitem {equals}, \hyperpage{12}
+    \subitem {has\_variable}, \hyperpage{12}
+    \subitem {interp}, \hyperpage{12}
+    \subitem {pretty\_print}, \hyperpage{12}
+    \subitem {pretty\_print\_at}, \hyperpage{12}
+    \subitem {print}, \hyperpage{12}
+    \subitem {subst}, \hyperpage{12}
+
+  \indexspace
+
+  \item {Num}, \hyperpage{13}
+    \subitem {equals}, \hyperpage{13}
+    \subitem {has\_variable}, \hyperpage{13}
+    \subitem {interp}, \hyperpage{14}
+    \subitem {pretty\_print}, \hyperpage{14}
+    \subitem {print}, \hyperpage{14}
+    \subitem {subst}, \hyperpage{14}
+
+  \indexspace
+
+  \item {pretty\_print}
+    \subitem {Add}, \hyperpage{10}
+    \subitem {Mult}, \hyperpage{12}
+    \subitem {Num}, \hyperpage{14}
+  \item {pretty\_print\_at}
+    \subitem {Add}, \hyperpage{10}
+    \subitem {Mult}, \hyperpage{12}
+  \item {print}
+    \subitem {Add}, \hyperpage{10}
+    \subitem {Mult}, \hyperpage{12}
+    \subitem {Num}, \hyperpage{14}
+    \subitem {VarExpr}, \hyperpage{15}
+
+  \indexspace
+
+  \item {subst}
+    \subitem {Add}, \hyperpage{10}
+    \subitem {Mult}, \hyperpage{12}
+    \subitem {Num}, \hyperpage{14}
+    \subitem {VarExpr}, \hyperpage{15}
+
+  \indexspace
+
+  \item {VarExpr}, \hyperpage{14}
+    \subitem {equals}, \hyperpage{15}
+    \subitem {has\_variable}, \hyperpage{15}
+    \subitem {interp}, \hyperpage{15}
+    \subitem {print}, \hyperpage{15}
+    \subitem {subst}, \hyperpage{15}
+
+\end{theindex}

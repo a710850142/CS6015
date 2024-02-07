@@ -1,0 +1,102 @@
+\doxysection{Num Class Reference}
+\hypertarget{class_num}{}\label{class_num}\index{Num@{Num}}
+Inheritance diagram for Num\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_num}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_num_a46101946d55ba2c20baa0e72a67eb1a3}\label{class_num_a46101946d55ba2c20baa0e72a67eb1a3} 
+{\bfseries Num} (int value)
+\item 
+int \mbox{\hyperlink{class_num_a9897087e439e1b7e6d90c6d9b9aadbb8}{interp}} () const override
+\item 
+bool \mbox{\hyperlink{class_num_a16ced80cc1e1ebe6a8387621bdb6aa35}{has\+\_\+variable}} () const override
+\item 
+\mbox{\hyperlink{class_expr}{Expr}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_num_a3b6db0eb9e50a4a85373e4953ef8d14f}{subst}} (const std\+::string \&var\+Name, const \mbox{\hyperlink{class_expr}{Expr}} \texorpdfstring{$\ast$}{*}replacement) const override
+\item 
+bool \mbox{\hyperlink{class_num_a5cb33dc5ae571e7f00ed40b4a52227db}{equals}} (const \mbox{\hyperlink{class_expr}{Expr}} \texorpdfstring{$\ast$}{*}other) const override
+\item 
+void \mbox{\hyperlink{class_num_a13de6f21485516ebfebdbc759a5ee772}{print}} (std\+::ostream \&os) const override
+\item 
+void \mbox{\hyperlink{class_num_a6155f0a0de62704bde855725cc362e8e}{pretty\+\_\+print}} (std\+::ostream \&os) const override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_expr}{Expr}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string {\bfseries to\+\_\+string} () const
+\item 
+virtual void {\bfseries pretty\+\_\+print\+\_\+at} (std\+::ostream \&os, precedence\+\_\+t prec) const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_num_a5cb33dc5ae571e7f00ed40b4a52227db}\label{class_num_a5cb33dc5ae571e7f00ed40b4a52227db} 
+\index{Num@{Num}!equals@{equals}}
+\index{equals@{equals}!Num@{Num}}
+\doxysubsubsection{\texorpdfstring{equals()}{equals()}}
+{\footnotesize\ttfamily bool Num\+::equals (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_expr}{Expr}} \texorpdfstring{$\ast$}{*}}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_expr}{Expr}}.
+
+\Hypertarget{class_num_a16ced80cc1e1ebe6a8387621bdb6aa35}\label{class_num_a16ced80cc1e1ebe6a8387621bdb6aa35} 
+\index{Num@{Num}!has\_variable@{has\_variable}}
+\index{has\_variable@{has\_variable}!Num@{Num}}
+\doxysubsubsection{\texorpdfstring{has\_variable()}{has\_variable()}}
+{\footnotesize\ttfamily bool Num\+::has\+\_\+variable (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_expr}{Expr}}.
+
+\Hypertarget{class_num_a9897087e439e1b7e6d90c6d9b9aadbb8}\label{class_num_a9897087e439e1b7e6d90c6d9b9aadbb8} 
+\index{Num@{Num}!interp@{interp}}
+\index{interp@{interp}!Num@{Num}}
+\doxysubsubsection{\texorpdfstring{interp()}{interp()}}
+{\footnotesize\ttfamily int Num\+::interp (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_expr}{Expr}}.
+
+\Hypertarget{class_num_a6155f0a0de62704bde855725cc362e8e}\label{class_num_a6155f0a0de62704bde855725cc362e8e} 
+\index{Num@{Num}!pretty\_print@{pretty\_print}}
+\index{pretty\_print@{pretty\_print}!Num@{Num}}
+\doxysubsubsection{\texorpdfstring{pretty\_print()}{pretty\_print()}}
+{\footnotesize\ttfamily void Num\+::pretty\+\_\+print (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_expr}{Expr}}.
+
+\Hypertarget{class_num_a13de6f21485516ebfebdbc759a5ee772}\label{class_num_a13de6f21485516ebfebdbc759a5ee772} 
+\index{Num@{Num}!print@{print}}
+\index{print@{print}!Num@{Num}}
+\doxysubsubsection{\texorpdfstring{print()}{print()}}
+{\footnotesize\ttfamily void Num\+::print (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_expr}{Expr}}.
+
+\Hypertarget{class_num_a3b6db0eb9e50a4a85373e4953ef8d14f}\label{class_num_a3b6db0eb9e50a4a85373e4953ef8d14f} 
+\index{Num@{Num}!subst@{subst}}
+\index{subst@{subst}!Num@{Num}}
+\doxysubsubsection{\texorpdfstring{subst()}{subst()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_expr}{Expr}} \texorpdfstring{$\ast$}{*} Num\+::subst (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{var\+Name,  }\item[{const \mbox{\hyperlink{class_expr}{Expr}} \texorpdfstring{$\ast$}{*}}]{replacement }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_expr}{Expr}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/xxy/\+Desktop/hw4/expr.\+h\item 
+/\+Users/xxy/\+Desktop/hw4/expr.\+cpp\end{DoxyCompactItemize}

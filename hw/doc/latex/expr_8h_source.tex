@@ -1,0 +1,119 @@
+\doxysection{/\+Users/xxy/\+Desktop/hw4/expr.h}
+\hypertarget{expr_8h_source}{}\label{expr_8h_source}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ EXPR\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ EXPR\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Define\ an\ enumeration\ for\ precedence\ levels\ of\ expressions.\ This\ is\ useful\ for\ pretty\ printing\ expressions\ with\ correct\ parentheses.}}
+\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ prec\_none,\ \ \ \ \ \ \textcolor{comment}{//\ No\ precedence,\ default\ level}}
+\DoxyCodeLine{00012\ \ \ \ \ prec\_add,\ \ \ \ \ \ \ \textcolor{comment}{//\ Precedence\ of\ addition,\ lower\ than\ multiplication}}
+\DoxyCodeLine{00013\ \ \ \ \ prec\_mult\ \ \ \ \ \ \ \textcolor{comment}{//\ Precedence\ of\ multiplication,\ higher\ than\ addition}}
+\DoxyCodeLine{00014\ \}\ precedence\_t;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Base\ class\ for\ all\ expression\ types.\ It\ declares\ the\ interface\ that\ all\ expressions\ must\ implement.}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_expr}{Expr}}\ \{}
+\DoxyCodeLine{00018\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_expr}{\string~Expr}}()\ \{\}\ \textcolor{comment}{//\ Virtual\ destructor\ to\ ensure\ proper\ cleanup\ of\ derived\ class\ objects\ through\ base\ class\ pointers.}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ Evaluate\ the\ expression\ and\ return\ its\ value\ as\ an\ integer.}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{int}\ interp()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ Return\ true\ if\ the\ expression\ contains\ a\ variable,\ false\ otherwise.}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ has\_variable()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ Replace\ occurrences\ of\ a\ variable\ with\ another\ expression\ and\ return\ the\ new\ expression.}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_expr}{Expr}}*\ subst(\textcolor{keyword}{const}\ std::string\&\ varName,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ replacement)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ this\ expression\ is\ equal\ to\ another\ expression.}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ other)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{//\ Print\ the\ expression\ to\ an\ output\ stream.}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ print(std::ostream\ \&os)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//\ Convert\ the\ expression\ to\ a\ string\ and\ return\ it.}}
+\DoxyCodeLine{00033\ \ \ \ \ std::string\ to\_string()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{//\ Default\ implementation\ of\ pretty\ printing.\ Can\ be\ overridden\ in\ derived\ classes\ for\ custom\ behavior.}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ pretty\_print(std::ostream\ \&os)\textcolor{keyword}{\ const\ }\{\ print(os);\ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//\ Auxiliary\ method\ for\ pretty\_print,\ allowing\ for\ precedence-\/aware\ printing.}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ pretty\_print\_at(std::ostream\ \&os,\ precedence\_t\ prec)\textcolor{keyword}{\ const\ }\{\ pretty\_print(os);\ \}}
+\DoxyCodeLine{00039\ \};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{//\ Represents\ numeric\ literals\ in\ expressions.}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_num}{Num}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_expr}{Expr}}\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ value;\ \textcolor{comment}{//\ The\ numeric\ value\ of\ this\ literal.}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{class_num}{Num}}(\textcolor{keywordtype}{int}\ value)\ :\ value(value)\ \{\}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//\ Implementations\ of\ virtual\ methods\ from\ Expr.}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{int}\ interp()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_variable()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ subst(\textcolor{keyword}{const}\ std::string\&\ varName,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ replacement)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ other)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ Methods\ to\ print\ and\ pretty\ print\ the\ numeric\ literal.}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{void}\ print(std::ostream\ \&os)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ pretty\_print(std::ostream\ \&os)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ Represents\ addition\ operations\ between\ two\ expressions.}}
+\DoxyCodeLine{00059\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_add}{Add}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_expr}{Expr}}\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ lhs;\ \textcolor{comment}{//\ Left-\/hand\ side\ expression}}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ rhs;\ \textcolor{comment}{//\ Right-\/hand\ side\ expression}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{class_add}{Add}}(\mbox{\hyperlink{class_expr}{Expr}}*\ lhs,\ \mbox{\hyperlink{class_expr}{Expr}}*\ rhs)\ :\ lhs(lhs),\ rhs(rhs)\ \{\}}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{class_add}{\string~Add}}();\ \textcolor{comment}{//\ Destructor\ to\ clean\ up\ dynamically\ allocated\ expressions.}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{//\ Implementations\ of\ virtual\ methods\ from\ Expr.}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{int}\ interp()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_variable()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ subst(\textcolor{keyword}{const}\ std::string\&\ varName,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ replacement)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ other)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//\ Methods\ to\ print\ and\ pretty\ print\ the\ addition\ expression,\ with\ precedence\ handling.}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ print(std::ostream\ \&os)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{void}\ pretty\_print(std::ostream\ \&os)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ pretty\_print\_at(std::ostream\ \&os,\ precedence\_t\ prec)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00076\ \};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{//\ Represents\ multiplication\ operations\ between\ two\ expressions.}}
+\DoxyCodeLine{00079\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_mult}{Mult}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_expr}{Expr}}\ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ lhs;\ \textcolor{comment}{//\ Left-\/hand\ side\ expression}}
+\DoxyCodeLine{00081\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ rhs;\ \textcolor{comment}{//\ Right-\/hand\ side\ expression}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00083\ \ \ \ \ \mbox{\hyperlink{class_mult}{Mult}}(\mbox{\hyperlink{class_expr}{Expr}}*\ lhs,\ \mbox{\hyperlink{class_expr}{Expr}}*\ rhs)\ :\ lhs(lhs),\ rhs(rhs)\ \{\}}
+\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{class_mult}{\string~Mult}}();\ \textcolor{comment}{//\ Destructor\ to\ clean\ up\ dynamically\ allocated\ expressions.}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{//\ Implementations\ of\ virtual\ methods\ from\ Expr.}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{int}\ interp()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_variable()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ subst(\textcolor{keyword}{const}\ std::string\&\ varName,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ replacement)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ other)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ Methods\ to\ print\ and\ pretty\ print\ the\ multiplication\ expression,\ with\ precedence\ handling.}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{void}\ print(std::ostream\ \&os)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{void}\ pretty\_print(std::ostream\ \&os)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ pretty\_print\_at(std::ostream\ \&os,\ precedence\_t\ prec)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00096\ \};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{//\ Represents\ variable\ expressions\ in\ the\ expression\ tree.}}
+\DoxyCodeLine{00099\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_var_expr}{VarExpr}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_expr}{Expr}}\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ std::string\ name;\ \textcolor{comment}{//\ The\ name\ of\ the\ variable.}}
+\DoxyCodeLine{00101\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00102\ \ \ \ \ \mbox{\hyperlink{class_var_expr}{VarExpr}}(\textcolor{keyword}{const}\ std::string\&\ name)\ :\ name(name)\ \{\}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{//\ Implementations\ of\ virtual\ methods\ from\ Expr.}}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{int}\ interp()\ \textcolor{keyword}{const\ override};\ \textcolor{comment}{//\ Throws\ an\ exception\ because\ variables\ cannot\ be\ interpreted\ without\ a\ value.}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_variable()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00107\ \ \ \ \ \mbox{\hyperlink{class_expr}{Expr}}*\ subst(\textcolor{keyword}{const}\ std::string\&\ varName,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ replacement)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{bool}\ equals(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_expr}{Expr}}*\ other)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//\ Print\ the\ variable's\ name.}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{void}\ print(std::ostream\ \&os)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00112\ \};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ EXPR\_H}}
+
+\end{DoxyCode}

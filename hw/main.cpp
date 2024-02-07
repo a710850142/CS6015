@@ -1,3 +1,9 @@
+/**
+* \mainpage MSDScript
+* \author Xiyao Xu
+* \author Second Author (if applicable)
+* \date 02-06-2024
+*/
 #include "cmdline.h"
 #define CATCH_CONFIG_RUNNER
 #include "catch.h"

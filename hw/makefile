@@ -26,3 +26,6 @@ test: msdscript
 .PHONY: clean
 clean:
 	rm -f *.o msdscript
+
+doc: msdscript
+	cd doc && doxygen
