@@ -1,260 +1,242 @@
+#include <sstream>
 #include "expr.h"
 
-// Num 类成员函数实现
+// Num 类的 interp 方法实现
 int Num::interp() const {
-    return value;
+    return value;  // 返回该数值
 }
 
+// Num 类的 has_variable 方法实现
 bool Num::has_variable() const {
-    return false;
+    return false;  // 数值表达式不含变量，返回 false
 }
 
+// Num 类的 subst 方法实现
 Expr* Num::subst(const std::string& varName, const Expr* replacement) const {
-    return new Num(value); // 数字表达式不包含变量，直接返回自身的副本
+    return new Num(value);  // 返回新的 Num 类型表达式，保持不变
 }
 
+// Num 类的 equals 方法实现
 bool Num::equals(const Expr* other) const {
-    const Num* asNum = dynamic_cast<const Num*>(other);
-    return asNum && this->value == asNum->value;
+    const Num* num = dynamic_cast<const Num*>(other);
+    return num && value == num->value;  // 检查是否与另一个 Num 类型表达式相等
 }
 
-void Num::print(std::ostream &os) const {
-    os << value;
+// Num 类的 print 方法实现
+void Num::print(std::ostream& os) const {
+    os << std::to_string(value);  // 将数值转换为字符串输出
 }
 
-std::string Num::to_string() const {
-    std::ostringstream oss;
-    oss << value; // 假设 value 是 Num 类中存储数字的成员变量
-    return oss.str();
+// Num 类的 pretty_print_at 方法实现
+void Num::pretty_print_at(std::ostream& ot, precedence_t prec, int newLinePrevPos, bool addParan) const {
+    this->print(ot);  // 直接打印数值
 }
 
-// Add 类成员函数实现
-Add::Add(Expr* lhs, Expr* rhs) : lhs(lhs), rhs(rhs) {}
-
+// Add 类的析构函数实现
 Add::~Add() {
-    delete lhs;
-    delete rhs;
+    delete lhs;  // 释放左子表达式内存
+    delete rhs;  // 释放右子表达式内存
 }
 
+// Add 类的 interp 方法实现
 int Add::interp() const {
-    return lhs->interp() + rhs->interp();
+    return lhs->interp() + rhs->interp();  // 返回左右子表达式求值之和
 }
 
+// Add 类的 has_variable 方法实现
 bool Add::has_variable() const {
-    return lhs->has_variable() || rhs->has_variable();
+    return lhs->has_variable() || rhs->has_variable();  // 左右子表达式任一含有变量即返回 true
 }
 
+// Add 类的 subst 方法实现
 Expr* Add::subst(const std::string& varName, const Expr* replacement) const {
-    return new Add(lhs->subst(varName, replacement), rhs->subst(varName, replacement));
+    return new Add(lhs->subst(varName, replacement), rhs->subst(varName, replacement));  // 对左右子表达式进行替换并返回新的 Add 表达式
 }
 
+// Add 类的 equals 方法实现
 bool Add::equals(const Expr* other) const {
-    const Add* asAdd = dynamic_cast<const Add*>(other);
-    return asAdd && lhs->equals(asAdd->lhs) && rhs->equals(asAdd->rhs);
+    const Add* add = dynamic_cast<const Add*>(other);
+    return add && lhs->equals(add->lhs) && rhs->equals(add->rhs);  // 检查左右子表达式是否相等
 }
 
-void Add::print(std::ostream &os) const {
-    os << "(";
+// Add 类的 print 方法实现
+void Add::print(std::ostream& os) const {
+    os << '(';
     lhs->print(os);
-    os << " + ";
+    os << "+";
     rhs->print(os);
-    os << ")";
+    os << ')';
 }
 
-std::string Add::to_string() const {
-    std::ostringstream oss;
-    print(oss);
-    return oss.str();
-}
-
-void Add::pretty_print_at(std::ostream &os, precedence_t prec, std::streampos& last_newline) const {
-    // 检查当前表达式是否需要在外部添加括号
-    bool needOuterParens = prec > prec_add; // 如果当前上下文优先级高于加法，需要括号
-
-    if (needOuterParens) os << "(";
-
-    lhs->pretty_print_at(os, prec_add, last_newline);
+// Add 类的 pretty_print_at 方法实现
+void Add::pretty_print_at(std::ostream& os, precedence_t prec, int ini_pos, bool addParan) const {
+    bool needParens = prec >= prec_add;
+    if (needParens) os << "(";
+    lhs->pretty_print_at(os, prec, ini_pos, true);
     os << " + ";
-    rhs->pretty_print_at(os, prec_add, last_newline);
-
-    if (needOuterParens) os << ")";
+    rhs->pretty_print_at(os, prec, ini_pos, addParan && !addParan);
+    if (needParens) os << ")";
 }
 
-
-
-
-// Mult 类成员函数实现
-Mult::Mult(Expr* lhs, Expr* rhs) : lhs(lhs), rhs(rhs) {}
-
+// Mult 类的析构函数实现
 Mult::~Mult() {
-    delete lhs;
-    delete rhs;
+    delete lhs;  // 释放左子表达式内存
+    delete rhs;  // 释放右子表达式内存
 }
 
+// Mult 类的 interp 方法实现
 int Mult::interp() const {
-    return lhs->interp() * rhs->interp();
+    return lhs->interp() * rhs->interp();  // 返回左右子表达式求值之积
 }
 
+// Mult 类的 has_variable 方法实现
 bool Mult::has_variable() const {
-    return lhs->has_variable() || rhs->has_variable();
+    return lhs->has_variable() || rhs->has_variable();  // 左右子表达式任一含有变量即返回 true
 }
 
+// Mult 类的 subst 方法实现
 Expr* Mult::subst(const std::string& varName, const Expr* replacement) const {
-    return new Mult(lhs->subst(varName, replacement), rhs->subst(varName, replacement));
+    return new Mult(lhs->subst(varName, replacement), rhs->subst(varName, replacement));  // 对左右子表达式进行替换并返回新的 Mult 表达式
 }
 
+// Mult 类的 equals 方法实现
 bool Mult::equals(const Expr* other) const {
-    const Mult* asMult = dynamic_cast<const Mult*>(other);
-    return asMult && lhs->equals(asMult->lhs) && rhs->equals(asMult->rhs);
+    const Mult* mult = dynamic_cast<const Mult*>(other);
+    return mult && lhs->equals(mult->lhs) && rhs->equals(mult->rhs);  // 检查左右子表达式是否相等
 }
 
-void Mult::print(std::ostream &os) const {
-    os << "(";
+// Mult 类的 print 方法实现
+void Mult::print(std::ostream& os) const {
+    os << '(';
     lhs->print(os);
-    os << " * ";
+    os << "*";
     rhs->print(os);
-    os << ")";
+    os << ')';
 }
 
-std::string Mult::to_string() const {
-    std::ostringstream oss;
-    print(oss);
-    return oss.str();
-}
-
-void Mult::pretty_print_at(std::ostream &os, precedence_t prec, std::streampos& last_newline) const {
-    // 判断左侧表达式是否需要括号
-    bool leftNeedsParens = dynamic_cast<const Add*>(lhs) != nullptr;
-    if (leftNeedsParens) os << "(";
-    lhs->pretty_print_at(os, prec_mult, last_newline); // 使用乘法的优先级进行打印
-    if (leftNeedsParens) os << ")";
-
+// Mult 类的 pretty_print_at 方法实现
+void Mult::pretty_print_at(std::ostream& os, precedence_t prec, int ini_pos, bool addParan) const {
+    bool needParens = prec >= prec_mult;
+    if (needParens) os << "(";
+    lhs->pretty_print_at(os, prec_mult, ini_pos, true);
     os << " * ";
-
-    // 判断右侧表达式是否需要括号
-    bool rightNeedsParens = dynamic_cast<const Add*>(rhs) != nullptr || dynamic_cast<const Mult*>(rhs) != nullptr;
-    if (rightNeedsParens) os << "(";
-    rhs->pretty_print_at(os, prec_none, last_newline); // 修改为prec_none以确保括号在需要时被添加
-    if (rightNeedsParens) os << ")";
+    rhs->pretty_print_at(os, prec_add, ini_pos, addParan && !needParens);  // 对右子表达式采用右结合性
+    if (needParens) os << ")";
 }
 
-
-
-
-
-
-
-
-
-
-
-// VarExpr 类成员函数实现
-VarExpr::VarExpr(const std::string& name) : name(name) {}
-
+// VarExpr 类的 interp 方法实现
 int VarExpr::interp() const {
-    throw std::runtime_error("Variable has no value");
+    throw std::runtime_error("No value for variable");  // 报错：变量没有对应值
 }
 
+// VarExpr 类的 has_variable 方法实现
 bool VarExpr::has_variable() const {
-    return true;
+    return true;  // 变量表达式总是含有变量，返回 true
 }
 
+// VarExpr 类的 subst 方法实现
 Expr* VarExpr::subst(const std::string& varName, const Expr* replacement) const {
     if (name == varName) {
-        return replacement->subst(varName, replacement);
+        return replacement->subst(varName, replacement);  // 返回替换后的表达式
     } else {
-        return new VarExpr(name);
+        return new VarExpr(name);  // 否则保持不变
     }
 }
 
+// VarExpr 类的 equals 方法实现
 bool VarExpr::equals(const Expr* other) const {
-    const VarExpr* asVar = dynamic_cast<const VarExpr*>(other);
-    return asVar && this->name == asVar->name;
+    const VarExpr* var = dynamic_cast<const VarExpr*>(other);
+    return var && name == var->name;  // 检查变量名是否相等
 }
 
-void VarExpr::print(std::ostream &os) const {
-    os << name;
+// VarExpr 类的 print 方法实现
+void VarExpr::print(std::ostream& os) const {
+    os << this->name;  // 输出变量名
 }
 
-std::string VarExpr::to_string() const {
-    std::ostringstream oss;
-    print(oss);
-    return oss.str();
+// VarExpr 类的 pretty_print_at 方法实现
+void VarExpr::pretty_print_at(std::ostream& os, precedence_t prec, int ini_pos, bool outerParan) const {
+    this->print(os);  // 直接打印变量名
 }
 
-// LetExpr 类成员函数实现
-LetExpr::LetExpr(const std::string& var, Expr* rhs, Expr* body) : var(var), rhs(rhs), body(body) {}
+// Expr 类的 to_string 方法实现
+std::string Expr::to_string() {
+    std::stringstream st("");
+    this->print(st);  // 将表达式打印到 stringstream 中
+    return st.str();  // 返回字符串形式的表达式
+}
 
+// Expr 类的 to_pretty_string 方法实现
+std::string Expr::to_pretty_string() const {
+    std::stringstream ss;
+    pretty_print(ss);  // 将表达式美观打印到 stringstream 中
+    return ss.str();  // 返回美观字符串形式的表达式
+}
+
+// LetExpr 类的构造函数实现
+LetExpr::LetExpr(const std::string& varName, Expr* bindingExpr, Expr* bodyExpr)
+        : varName(varName), bindingExpr(bindingExpr), bodyExpr(bodyExpr) {}
+
+// LetExpr 类的析构函数实现
 LetExpr::~LetExpr() {
-    delete rhs;
-    delete body;
+    delete bindingExpr;  // 释放绑定表达式内存
+    delete bodyExpr;     // 释放主体表达式内存
 }
 
+// LetExpr 类的 interp 方法实现
 int LetExpr::interp() const {
-    throw std::runtime_error("LetExpr interp not implemented");
+    int bind_n = this->bindingExpr->interp();  // 计算绑定表达式的值
+    Num* bind_n_Expr = new Num(bind_n);        // 创建对应的数值表达式
+
+    return this->bodyExpr->subst(varName, bind_n_Expr)->interp();  // 对主体表达式进行变量替换并求值
 }
 
+// LetExpr 类的 has_variable 方法实现
 bool LetExpr::has_variable() const {
-    return rhs->has_variable() || body->has_variable();
+    return bindingExpr->has_variable() || bodyExpr->has_variable();  // 绑定表达式或主体表达式任一含有变量即返回 true
 }
 
-Expr* LetExpr::subst(const std::string& varName, const Expr* replacement) const {
-
-    Expr* newRhs = rhs->subst(varName, replacement);
-    Expr* newBody = body;
-    if (var != varName) {
-        newBody = body->subst(varName, replacement);
-    } else {
-
-    }
-
-    return new LetExpr(var, newRhs, newBody);
+// LetExpr 类的 subst 方法实现
+Expr* LetExpr::subst(const std::string& vName, const Expr* replacement) const {
+    return new LetExpr(varName, bindingExpr->subst(vName, replacement), bodyExpr->subst(vName, replacement));  // 对绑定表达式和主体表达式进行变量替换并返回新的 LetExpr 表达式
 }
 
-
-
-
-
-
+// LetExpr 类的 equals 方法实现
 bool LetExpr::equals(const Expr* other) const {
     const LetExpr* otherLet = dynamic_cast<const LetExpr*>(other);
-    if (!otherLet) return false;
-    return var == otherLet->var && rhs->equals(otherLet->rhs) && body->equals(otherLet->body);
+    if (otherLet == NULL) {
+        return false;  // 类型不匹配，返回 false
+    }
+    return otherLet && varName == otherLet->varName &&
+           bindingExpr->equals(otherLet->bindingExpr) &&
+           bodyExpr->equals(otherLet->bodyExpr);  // 检查变量名及绑定表达式、主体表达式是否相等
 }
 
-
-
-void LetExpr::print(std::ostream &os) const {
-    os << "(_let " << var << "=";
-    rhs->print(os);
-    os << " _in ";
-    body->print(os);
-    os << ")";
+// LetExpr 类的 print 方法实现
+void LetExpr::print(std::ostream& os) const {
+    os << "(_let " << varName << "=";  // 输出 let 关键字和变量名
+    bindingExpr->print(os);            // 输出绑定表达式
+    os << " _in ";                     // 输出 in 关键字
+    bodyExpr->print(os);               // 输出主体表达式
+    os << ")";                         // 输出右括号
 }
 
-
-std::string LetExpr::to_string() const {
-    std::ostringstream oss;
-    print(oss);
-    return oss.str();
+// LetExpr 类的 pretty_print_at 方法实现
+void LetExpr::pretty_print_at(std::ostream& os, precedence_t prec, int ini_pos, bool addParan) const {
+    if (addParan) os << "(";  // 添加左括号
+    int pos_updated = os.tellp();  // 记录当前位置
+    int indentation = pos_updated - ini_pos;  // 计算缩进量
+    os << "_let " << varName << " = ";  // 输出 let 关键字和变量名
+    bindingExpr->pretty_print_at(os, prec_none, ini_pos, false);  // 输出绑定表达式
+    os << "\n";  // 换行
+    int curPos = os.tellp();  // 记录当前位置
+    while (indentation > 0) {  // 根据缩进量添加空格
+        os << " ";
+        indentation -= 1;
+    }
+    os << "_in  ";  // 输出 in 关键字
+    bodyExpr->pretty_print_at(os, prec_none, curPos, false);  // 输出主体表达式
+    if (addParan) {
+        os << ")";  // 添加右括号
+    }
 }
-
-std::string generateIndent(int level) {
-    return std::string(level, ' ');
-}
-
-// 假设我们有一个全局变量或者通过其他方式传递缩进级别
-int indentLevel = 0;
-
-void LetExpr::pretty_print_at(std::ostream &os, precedence_t prec, std::streampos& last_newline) const {
-    os << "_let " << var << " = ";
-    rhs->pretty_print_at(os, prec_let, last_newline);
-    os << "\n" << generateIndent(indentLevel) << "_in  ";
-    // 增加缩进级别以反映嵌套
-    indentLevel += 4;
-    body->pretty_print_at(os, prec_let, last_newline);
-    // 恢复之前的缩进级别
-    indentLevel -= 4;
-}
-
-

@@ -8,4 +8,7 @@ add_executable(untitled main.cpp
         cmdline.h
         expr.cpp
         expr.h
-        Test.cpp)
+        Test.cpp
+        parse.cpp
+        parse.h
+        parse-test.cpp)

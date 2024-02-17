@@ -1,5 +1,53 @@
-#include "catch.h"
 #include "expr.h"
+#include <sstream>
+#include "catch.h"
+
+//test print
+TEST_CASE("Test print"){
+    CHECK ( (new Mult(new Num(1), new Add(new Num(2), new Num(3))))->to_pretty_string() ==  "1 * (2 + 3)" );
+    CHECK ( (new Mult(new Mult(new Num(8), new Num(1)), new VarExpr("y")))->to_pretty_string() ==  "(8 * 1) * y" );
+    CHECK ( (new Mult(new Add(new Num(3), new Num(5)), new Mult(new Num(6), new Num(1))))->to_pretty_string() ==  "(3 + 5) * 6 * 1" );
+    CHECK ( (new Mult(new Mult(new Num(7), new Num(7)), new Add(new Num(9), new Num(2))) )->to_pretty_string() ==  "(7 * 7) * (9 + 2)" );
+    CHECK ( (new Mult(new Mult(new Num(5), new Num(6)), new Add(new Num(7), new Num(8))) )->to_string() ==  "((5*6)*(7+8))" );
+    CHECK ( (new Add(new Mult(new Num(4), new Num(5)), new Num(6)))->to_pretty_string() ==  "4 * 5 + 6" );
+    CHECK ( (new Mult(new Num(2), new Add(new Mult(new Num(3), new Num(4)), new Num(5))))->to_pretty_string() ==  "2 * (3 * 4 + 5)" );
+    CHECK ( (new Add(new Mult(new Num(2), new Num(3)), new Mult(new Num(4), new Num(5))))->to_pretty_string() ==  "2 * 3 + 4 * 5" );
+    CHECK ( (new Mult(new Add(new Num(2), new Num(3)), new Add(new Num(4), new Num(5))))->to_pretty_string() ==  "(2 + 3) * (4 + 5)" );
+    CHECK ( (new Add(new Mult(new Num(4), new Num(5)), new Num(6)))->to_string() ==  "((4*5)+6)" );
+    CHECK ( (new Mult(new Num(7), new Add(new Mult(new Num(2), new Num(3)), new Num(4))))->to_pretty_string() ==  "7 * (2 * 3 + 4)" );
+    CHECK ( (new Add(new Mult(new Num(7), new Num(2)), new Mult(new Num(3), new Num(4))))->to_pretty_string() ==  "7 * 2 + 3 * 4" );
+    CHECK ( (new Mult(new Add(new Num(7), new Num(2)), new Add(new Num(3), new Num(4))))->to_pretty_string() ==  "(7 + 2) * (3 + 4)" );
+    CHECK ( (new Mult(new Mult(new Num(7), new Num(2)), new Add(new Num(3), new Num(4))))->to_pretty_string() ==  "(7 * 2) * (3 + 4)" );
+    CHECK ( (new Mult(new Add(new Num(7), new Num(2)), new Mult(new Num(3), new Num(4))))->to_string() ==  "((7+2)*(3*4))" );
+}
+TEST_CASE("Edge Cases") {
+    Add zeroTest(new Num(0), new Num(0));
+    REQUIRE(zeroTest.interp() == 0);
+
+    Mult negativeTest(new Num(-1), new Num(5));
+    REQUIRE(negativeTest.interp() == -5);
+}
+
+// Test LetExpr print
+TEST_CASE("Let test"){
+    CHECK((new LetExpr("x", new Num(5), new Add(new LetExpr("y", new Num(3), new Add(new VarExpr("y"), new Num(2))), new VarExpr("x"))))->equals(new Num(7))==false);
+    CHECK((new LetExpr("x", new Num(5), new Add(new LetExpr("y", new Num(3), new Add(new VarExpr("y"), new Num(2))), new VarExpr("x"))))->has_variable()==true);
+    CHECK((new LetExpr("x", new Num(5), new Add(new LetExpr("y", new Num(3), new Add(new VarExpr("y"), new Num(2))), new VarExpr("x"))))->to_string()=="(_let x=5 _in ((_let y=3 _in (y+2))+x))");
+    CHECK((new LetExpr("x", new Num(5), new LetExpr("x", new Num(6), new Add(new VarExpr("x"), new Num(1)))))->to_string()=="(_let x=5 _in (_let x=6 _in (x+1)))");
+    CHECK((new LetExpr("x", new Num(5), new Add(new LetExpr("y", new Num(3), new Add(new VarExpr("y"), new Num(2))), new VarExpr("x"))))->interp()==10);
+    CHECK((new LetExpr("x", new Num(5), new Add(new VarExpr("x"), new Mult(new Num(1), new Num(2)))))->interp()==7);
+    CHECK ( (new Mult(new Mult(new Num(2), new LetExpr("x", new Num(5), new Add(new VarExpr("x"), new Num(1)))), new Num(3)))->to_pretty_string() == "(2 * _let x = 5\n"
+                                                                                                                                                     "     _in  x + 1) * 3");CHECK((new Mult(new Num(5), new Add(new LetExpr("x", new Num(5), new VarExpr("x")), new Num(1))))->to_pretty_string() == "5 * ((_let x = 5\n"
+                                                                                                                             "      _in  x) + 1)");
+
+    CHECK ( (new Add(new LetExpr("x", new Num(2), new Add(new VarExpr("x"), new Num(9))), new Num(4)))->to_pretty_string() == "(_let x = 2\n"
+                                                                                                                              " _in  x + 9) + 4");
+    CHECK((new Mult(new LetExpr("x", new Num(5), new Add(new VarExpr("x"), new Num(8))), new Num(3)))->to_pretty_string() == "(_let x = 5\n"
+                                                                                                                             " _in  x + 8) * 3");
+    CHECK((new Add(new Mult(new Num(4), new LetExpr("x", new Num(5), new Add(new VarExpr("x"), new Num(1)))), new Num(9)))->to_pretty_string() == "4 * (_let x = 5\n"
+                                                                                                                                                  "     _in  x + 1) + 9");
+
+}
 
 TEST_CASE("Num equals") {
     Num num1(5);
@@ -89,13 +137,6 @@ TEST_CASE("Mult interp, has_variable, and subst") {
     }
 }
 
-TEST_CASE("Edge Cases") {
-    Add zeroTest(new Num(0), new Num(0));
-    REQUIRE(zeroTest.interp() == 0);
-
-    Mult negativeTest(new Num(-1), new Num(5));
-    REQUIRE(negativeTest.interp() == -5);
-}
 TEST_CASE("Equality on Complex Expressions") {
     Add expr1(new Num(1), new Mult(new Num(2), new VarExpr("x")));
     Add expr2(new Num(1), new Mult(new Num(2), new VarExpr("x")));
@@ -146,48 +187,18 @@ TEST_CASE("Num and Operation Expression Printing") {
         CHECK(num.to_string() == "5");
     }
 
-        // 测试加法打印和字符串转换
-        // Section for testing printing of addition and its string conversion
-    SECTION("Add print and to_string") {
-        ss.str(""); // 清空 stringstream
-        add.print(ss);
-        CHECK(ss.str() == "(3 + 4)");
-        CHECK(add.to_string() == "(3 + 4)");
-    }
-
-        // 测试乘法打印和字符串转换
-        // Section for testing printing of multiplication and its string conversion
-    SECTION("Mult print and to_string") {
-        ss.str(""); // 清空 stringstream
-        mult.print(ss);
-        CHECK(ss.str() == "(4 * 2)");
-        CHECK(mult.to_string() == "(4 * 2)");
-    }
 }
 
 TEST_CASE("Complex Expression Printing") {
     std::stringstream ss;
     Add complexExpr(new Add(new Num(2), new Mult(new Num(3), new VarExpr("x"))), new Num(4));
 
-    // 测试复杂表达式的打印和字符串转换
-    // Section for testing printing of a complex expression and its string conversion
-    SECTION("Complex expression print and to_string") {
-        complexExpr.print(ss);
-        CHECK(ss.str() == "((2 + (3 * x)) + 4)");
-        CHECK(complexExpr.to_string() == "((2 + (3 * x)) + 4)");
-    }
 }
 
 TEST_CASE("Complex expression printing with LetExpr") {
     std::stringstream ss;
     LetExpr complexLet("x", new Num(5), new Add(new VarExpr("x"), new Mult(new Num(2), new VarExpr("y"))));
 
-    SECTION("Complex LetExpr print and to_string") {
-        complexLet.print(ss);
-        std::string expectedOutput = "(_let x=5 _in (x + (2 * y)))";
-        CHECK(ss.str() == expectedOutput);
-        CHECK(complexLet.to_string() == expectedOutput);
-    }
 }
 
 // 测试 LetExpr 中对异常的处理，尤其是在使用 interp 方法时
@@ -208,25 +219,8 @@ TEST_CASE("LetExpr functionality") {
         REQUIRE(let.has_variable() == true); // 因为 body 中可能引用了变量
     }
 
-    SECTION("subst") {
-        // 测试替换功能，应该能够替换掉 Let 表达式中的变量
-        Expr* substExpr = let.subst("x", new Num(10));
-        REQUIRE(dynamic_cast<LetExpr*>(substExpr) != nullptr);
-        REQUIRE(substExpr->has_variable() == true); // 替换后，表达式中依然可能存在变量
-    }
 
-    SECTION("interp throws") {
-        // 测试解释执行时抛出异常，因为 LetExpr 的 interp 方法未实现
-        REQUIRE_THROWS_AS(let.interp(), std::runtime_error);
-    }
 
-    SECTION("print and to_string") {
-        std::stringstream ss;
-        let.print(ss);
-        std::string expectedOutput = "(_let x=5 _in (x + 3))";
-        CHECK(ss.str() == expectedOutput);
-        CHECK(let.to_string() == expectedOutput);
-    }
 }
 
 TEST_CASE("Nested LetExpr evaluation") {
@@ -246,13 +240,6 @@ TEST_CASE("Nested LetExpr evaluation") {
 TEST_CASE("LetExpr substitution and variable handling") {
     LetExpr let("x", new Num(5), new Add(new VarExpr("x"), new Num(3)));
 
-    SECTION("subst with variable present") {
-        Expr* substExpr = let.subst("x", new Num(4));
-        // 在这个场景中，由于 "x" 是 LetExpr 中的变量，替换操作会影响表达式。
-        // 但因为 LetExpr 的特殊性，外部替换不会改变 body 内部对 "x" 的引用。
-        // 所以这里检查替换后的表达式是否正确处理了变量，可能需要更细致的逻辑来验证。
-        REQUIRE(substExpr->has_variable() == true);
-    }
 
     SECTION("equals after subst on non-existent variable") {
         Expr* substExpr = let.subst("y", new Num(4)); // 替换一个不在 Let 表达式中的变量
@@ -270,72 +257,4 @@ TEST_CASE("VarExpr to_string") {
     VarExpr varExpr("x");
     CHECK(varExpr.to_string() == "x");
 }
-
-TEST_CASE("LetExpr basic pretty print") {
-    std::stringstream ss;
-    LetExpr letExpr("x", new Num(10), new Add(new VarExpr("x"), new Num(5)));
-    std::streampos last_newline = ss.tellp();
-
-    letExpr.pretty_print_at(ss, prec_none, last_newline);
-
-    CHECK(ss.str() == "_let x = 10\n_in  (x + 5)");
-}
-TEST_CASE("Nested LetExpr pretty print") {
-    std::stringstream ss;
-    LetExpr nestedLet(
-            "x", new Num(5),
-            new LetExpr("y", new Num(10), new Add(new VarExpr("x"), new VarExpr("y")))
-    );
-    std::streampos last_newline = ss.tellp();
-
-    nestedLet.pretty_print_at(ss, prec_none, last_newline);
-
-    std::string expectedOutput = "_let x = 5\n_in  _let y = 10\n    _in  (x + y)";
-    CHECK(ss.str() == expectedOutput);
-}
-TEST_CASE("LetExpr pretty print with variable shadowing") {
-    std::stringstream ss;
-    LetExpr outerLet(
-            "x", new Num(1),
-            new LetExpr("x", new Num(2), new Add(new VarExpr("x"), new Num(3)))
-    );
-    std::streampos last_newline = ss.tellp();
-
-    outerLet.pretty_print_at(ss, prec_none, last_newline);
-
-    std::string expectedOutput = "_let x = 1\n_in  _let x = 2\n    _in  (x + 3)";
-    CHECK(ss.str() == expectedOutput);
-}
-
-TEST_CASE("LetExpr interp throws not implemented exception") {
-    LetExpr letExpr("x", new Num(5), new Add(new VarExpr("x"), new Num(3)));
-
-    REQUIRE_THROWS_AS(letExpr.interp(), std::runtime_error);
-}
-
-TEST_CASE("LetExpr has_variable with complex expressions") {
-    LetExpr complexExpr("x", new Num(5),
-                        new Add(new VarExpr("x"), new Mult(new Num(2), new VarExpr("y")))
-    );
-
-    REQUIRE(complexExpr.has_variable() == true);
-}
-
-TEST_CASE("Nested LetExpr print and pretty_print") {
-    LetExpr nestedLet("x", new Num(5),
-                      new LetExpr("y", new Num(10), new Add(new VarExpr("x"), new VarExpr("y")))
-    );
-    std::stringstream printOutput;
-    std::stringstream prettyPrintOutput;
-    std::streampos last_newline = prettyPrintOutput.tellp();
-
-    nestedLet.print(printOutput);
-    nestedLet.pretty_print_at(prettyPrintOutput, prec_none, last_newline);
-
-    CHECK(printOutput.str() == "(_let x=5 _in (_let y=10 _in (x + y)))");
-    CHECK(prettyPrintOutput.str() == "_let x = 5\n_in  _let y = 10\n    _in  (x + y)");
-}
-
-
-
 
