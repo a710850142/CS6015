@@ -2,10 +2,18 @@
 #define PARSE_H
 
 #include "expr.h"
-#include <iostream>
+#include <istream>
 
-// Parses an expression from the given input stream and returns a pointer to the expression object.
-Expr* parse(std::istream &in);
-Expr* parse_str(const std::string& str);
+// 解析表达式
+Expr* parse_expr(std::istream &in);
+Expr* parse_primary(std::istream &in);
+// 解析数字
+Expr* parse_num(std::istream &in);
+
+// 解析字符串表达式为 Expr 对象
+Expr* parse_str(const std::string &s);
+
+// 跳过空白字符
+void skip_whitespace(std::istream &in);
 
 #endif // PARSE_H
