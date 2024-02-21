@@ -7,6 +7,7 @@
 // 解析表达式
 Expr* parse_expr(std::istream &in);
 Expr* parse_primary(std::istream &in);
+
 // 解析数字
 Expr* parse_num(std::istream &in);
 

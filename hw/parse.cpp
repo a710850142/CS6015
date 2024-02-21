@@ -3,14 +3,19 @@
 
 static void consume(std::istream &in, int expect);
 void skip_whitespace(std::istream &in);
-Expr *parse_num(std::istream &inn);
+Expr *parse_num(std::istream &in);
+Expr *parse_let(std::istream &in);
 
 Expr* parse_expr(std::istream &in) {
     skip_whitespace(in);
 
     Expr* left = nullptr;
 
-    // 假设首先尝试解析一个数字或括号内的表达式
+    // 尝试解析 let 表达式
+    if (in.peek() == 'l') {
+        return parse_let(in);
+    }
+
     left = parse_primary(in);
 
     skip_whitespace(in);
@@ -42,27 +47,24 @@ Expr* parse_primary(std::istream &in) {
     } else if (c == '(') {
         consume(in, '(');
         skip_whitespace(in);
-        if (in.peek() == ')') { // 空括号检查
+        if (in.peek() == ')') { // 检查是否为空的括号表达式
             throw std::runtime_error("bad input");
         }
         Expr* e = parse_expr(in);
-        skip_whitespace(in);
-        if (in.peek() != ')') {
-            throw std::runtime_error("bad input"); // 未找到预期的闭合括号
+        skip_whitespace(in); // 在尝试消耗闭括号前，再次跳过任何空格
+        if (in.peek() != ')') { // 确保下一个字符是闭括号
+            throw std::runtime_error("bad input"); // 如果不是，则抛出 "bad input"
         }
-        consume(in, ')'); // 正常消耗闭合的右括号
+        consume(in, ')');
         return e;
-    } else if (isalpha(c)) { // 处理变量名
+    } else if (isalpha(c)) { // 确保它开始于一个字母
         std::string varName;
-        while (isalnum(in.peek()) || in.peek() == '_') {
+        while (isalpha(in.peek()) || isdigit(in.peek()) || in.peek() == '_') { // 变量名可以包含字母和数字，检查是否含有下划线
             char nextChar = in.get();
             if (nextChar == '_') {
                 throw std::runtime_error("invalid input"); // 如果变量名包含下划线，抛出异常
             }
             varName += nextChar;
-        }
-        if (varName.empty() || !isalpha(varName[0])) {
-            throw std::runtime_error("invalid input"); // 确保变量名以字母开头
         }
         return new VarExpr(varName);
     } else {
@@ -72,30 +74,22 @@ Expr* parse_primary(std::istream &in) {
 
 
 
-
-
-Expr *parse_num(std::istream &inn) {
+Expr *parse_num(std::istream &in) {
     int n = 0;
     bool negative = false;
 
-    if (inn.peek() == '-') {
+    if (in.peek() == '-') {
         negative = true;
-        inn.get(); // 消费负号
+        in.get(); // 消费负号
 
-        // 检查负号后是否紧跟数字
-        if (!isdigit(inn.peek())) {
+        if (!isdigit(in.peek())) {
             throw std::runtime_error("invalid input"); // 没有数字跟随负号，抛出异常
         }
     }
 
-    while (1) {
-        int c = inn.peek();
-        if (isdigit(c)) {
-            inn.get(); // 消费数字字符
-            n = n * 10 + (c - '0');
-        } else {
-            break;
-        }
+    while (isdigit(in.peek())) {
+        int c = in.get(); // 消费数字字符
+        n = n * 10 + (c - '0');
     }
 
     if (negative) {
@@ -105,26 +99,46 @@ Expr *parse_num(std::istream &inn) {
     return new Num(n);
 }
 
+Expr* parse_let(std::istream &in) {
+    std::string token;
+    in >> token;
+    if (token != "let") {
+        throw std::runtime_error("Expected 'let'");
+    }
+    skip_whitespace(in);
 
-// 假设您已经在 parse.cpp 中包含了 parse.h
-Expr* parse_str(const std::string &s) {
-    std::istringstream iss(s);
-    return parse_expr(iss);
+    std::string varName;
+    in >> varName;
+    skip_whitespace(in);
+
+    consume(in, '=');
+    Expr* bindingExpr = parse_expr(in);
+    skip_whitespace(in);
+
+    std::string inToken;
+    in >> inToken;
+    if (inToken != "_in") {
+        throw std::runtime_error("Expected '_in' in let expression");
+    }
+    Expr* bodyExpr = parse_expr(in);
+    return new LetExpr(varName, bindingExpr, bodyExpr);
 }
-
 
 static void consume(std::istream &in, int expect) {
     int c = in.get();
-    if (c!=expect) {
+    if (c != expect) {
         throw std::runtime_error("consume mismatch");
     }
 }
 
 void skip_whitespace(std::istream &in) {
-    while (1) {
-        int c = in.peek();
-        if (!isspace(c))
-            break;
-        consume(in, c);
+    while (isspace(in.peek())) {
+        in.get();
     }
+}
+
+// 假设您已经在 parse.cpp 中包含了 parse.h
+Expr* parse_str(const std::string &s) {
+    std::istringstream iss(s);
+    return parse_expr(iss);
 }

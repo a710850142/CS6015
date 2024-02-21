@@ -43,3 +43,24 @@ TEST_CASE("parse") {
 
 }
 
+// 测试变量解析
+TEST_CASE("Parse variable") {
+    std::string input = "x";
+    Expr* result = parse_str(input);
+    VarExpr* varExpr = dynamic_cast<VarExpr*>(result);
+    REQUIRE(varExpr != nullptr); // 确保正确地解析成 VarExpr
+    REQUIRE(varExpr->name == "x"); // 检查变量名
+
+    delete result; // 清理资源
+}
+
+// 测试 Let 表达式解析
+TEST_CASE("Parse let expression") {
+    std::string input = "let x = 5 _in x + 3";
+    Expr* result = parse_str(input);
+    LetExpr* letExpr = dynamic_cast<LetExpr*>(result);
+    REQUIRE(letExpr != nullptr); // 确保正确地解析成 LetExpr
+    // 检查变量名
+    REQUIRE(letExpr->varName == "x");
+    delete result; // 清理资源
+}

@@ -39,11 +39,10 @@ public:
     bool equals(const Expr* other) const override;  // 比较是否相等
     void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
     void print(std::ostream& os) const override;  // 打印表达式
+    int val;
 };
 
 class Add : public Expr {
-    Expr* lhs;
-    Expr* rhs;
 public:
     Add(Expr* lhs, Expr* rhs) : lhs(lhs), rhs(rhs) {}
     ~Add();
@@ -54,6 +53,8 @@ public:
     bool equals(const Expr* other) const override;  // 比较是否相等
     void print(std::ostream& os) const override;  // 打印表达式
     void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
+    Expr* lhs;
+    Expr* rhs;
 };
 
 class Mult : public Expr {
@@ -72,7 +73,6 @@ public:
 };
 
 class VarExpr : public Expr {
-    std::string name;
 public:
     VarExpr(const std::string& name) : name(name) {}
 
@@ -82,11 +82,10 @@ public:
     bool equals(const Expr* other) const override;  // 比较是否相等
     void print(std::ostream& os) const override;  // 打印表达式
     void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
+    std::string name;
 };
 
 class LetExpr : public Expr {
-    std::string varName;
-    Expr* bindingExpr;
     Expr* bodyExpr;
 
 public:
@@ -98,6 +97,8 @@ public:
     bool equals(const Expr* other) const override;  // 比较是否相等
     void print(std::ostream& os) const override;  // 打印表达式
     void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
+    std::string varName;
+    Expr* bindingExpr;
 };
 
 #endif // EXPR_H
