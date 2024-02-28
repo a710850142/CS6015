@@ -1,4 +1,13 @@
-/Users/xxy/Desktop/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Users/xxy/Desktop/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/xxy/Desktop/xxy -B /Users/xxy/Desktop/xxy/cmake-build-debug
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: /Users/xxy/Desktop/xxy/cmake-build-debug
+/Users/xxy/Desktop/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Users/xxy/Desktop/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/xxy/Desktop/777 -B /Users/xxy/Desktop/777/cmake-build-debug
+-- Configuring done (0.0s)
+CMake Error at CMakeLists.txt:6 (add_executable):
+  Cannot find source file:
+
+    run_msdscript.cpp
+
+
+CMake Error at CMakeLists.txt:6 (add_executable):
+  No SOURCES given to target: untitled
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.

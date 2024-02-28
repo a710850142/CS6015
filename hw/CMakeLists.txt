@@ -11,4 +11,12 @@ add_executable(untitled main.cpp
         Test.cpp
         parse.cpp
         parse.h
-        parse-test.cpp)
+        parse-test.cpp
+        exec.h
+        exec.cpp
+        test_msdscript.cpp
+        run_msdscript.cpp
+        run_msdscript2.cpp
+        run_msdscript2.cpp
+        run_msdscript.cpp
+        test_msdscript.cpp)
