@@ -6,7 +6,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "cmake-build-debug-coverage/CMakeFiles/3.27.8/CMakeSystem.cmake"
+			"path" : "cmake-build-debug/CMakeFiles/3.27.8/CMakeSystem.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -20,11 +20,11 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "cmake-build-debug-coverage/CMakeFiles/3.27.8/CMakeCCompiler.cmake"
+			"path" : "cmake-build-debug/CMakeFiles/3.27.8/CMakeCCompiler.cmake"
 		},
 		{
 			"isGenerated" : true,
-			"path" : "cmake-build-debug-coverage/CMakeFiles/3.27.8/CMakeCXXCompiler.cmake"
+			"path" : "cmake-build-debug/CMakeFiles/3.27.8/CMakeCXXCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -150,8 +150,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/Users/xxy/Desktop/777/cmake-build-debug-coverage",
-		"source" : "/Users/xxy/Desktop/777"
+		"build" : "/Users/xxy/Desktop/msd/cmake-build-debug",
+		"source" : "/Users/xxy/Desktop/msd"
 	},
 	"version" : 
 	{

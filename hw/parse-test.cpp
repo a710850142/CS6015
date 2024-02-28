@@ -6,6 +6,9 @@
 
 TEST_CASE("parse") {
     CHECK_THROWS_WITH(parse_str("()"), "bad input");
+    CHECK_THROWS_WITH(parse_str("1x"), "invalid input"); // 新的测试
+    CHECK_THROWS_WITH(parse_str("(1)x"), "invalid input"); // 新的测试
+    CHECK_THROWS_WITH(parse_str("1)"), "bad input"); // 新的测试
 
     CHECK(parse_str("(1)")->equals(new Num(1)));
     CHECK(parse_str("(((1)))")->equals(new Num(1)));

@@ -43,7 +43,7 @@ std::string generate_random_expression(int depth = 0) {
             std::string var = generate_random_variable();
             std::string binding_expr = generate_random_expression(depth + 1);
             std::string body_expr = generate_random_expression(depth + 1);
-            return "(_let " + var + "=" + binding_expr + " _in " + body_expr + ")";
+            return "(let " + var + "=" + binding_expr + " _in " + body_expr + ")";
         }
         default:
             return generate_random_num(); // 默认返回 Num，理论上不应该达到这里
@@ -106,3 +106,7 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
+
+
+

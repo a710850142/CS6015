@@ -10,9 +10,7 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated>
-      <config projectName="CS6015" targetName="CS6015" />
-    </generated>
+    <generated />
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -21,7 +19,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d383bef-27eb-470f-ac75-c0c5ad3b9660" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/hw/expr.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/hw/expr.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw/cmake-build-debug-coverage/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/hw/cmake-build-debug-coverage/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw/parse-test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/hw/parse-test.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hw/parse.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/hw/parse.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/report.pages" beforeDir="false" afterPath="$PROJECT_DIR$/report.pages" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,9 +70,9 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration name="CS6015" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="CS6015" TARGET_NAME="CS6015" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="CS6015" RUN_TARGET_NAME="CS6015">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -84,6 +86,7 @@
       <updated>1708021062496</updated>
       <workItem from="1708021063495" duration="1302000" />
       <workItem from="1708042960266" duration="3000" />
+      <workItem from="1709086769280" duration="542000" />
     </task>
     <servers />
   </component>

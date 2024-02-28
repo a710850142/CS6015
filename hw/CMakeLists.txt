@@ -1,22 +1,13 @@
 cmake_minimum_required(VERSION 3.27)
-project(untitled)
+project(msd)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(untitled main.cpp
+add_executable(msd main.cpp
         cmdline.cpp
-        cmdline.h
-        expr.cpp
-        expr.h
-        Test.cpp
-        parse.cpp
-        parse.h
-        parse-test.cpp
-        exec.h
         exec.cpp
-        test_msdscript.cpp
-        run_msdscript.cpp
-        run_msdscript2.cpp
-        run_msdscript2.cpp
-        run_msdscript.cpp
+        expr.cpp
+        parse.cpp
+        parse-test.cpp
+        Test.cpp
         test_msdscript.cpp)
