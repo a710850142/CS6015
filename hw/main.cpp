@@ -32,7 +32,6 @@ int main(int argc, char **argv) {
                 try {
                     Expr* expr = parse_str(input); // 解析表达式
                     std::cout << expr->interp() << std::endl; // 执行并打印结果
-                    delete expr;
                 } catch (const std::exception& e) {
                     std::cerr << "Error: " << e.what() << std::endl;
                     return 1;
@@ -47,7 +46,6 @@ int main(int argc, char **argv) {
                 Expr* expr = parse_str(input); // 解析表达式
                 expr->print(std::cout); // 打印表达式
                 std::cout << std::endl;
-                delete expr;
             }
                 break;
             case do_pretty_print:
@@ -58,7 +56,6 @@ int main(int argc, char **argv) {
                 Expr* expr = parse_str(input); // 解析表达式
                 expr->pretty_print(std::cout); // 美化打印表达式
                 std::cout << std::endl;
-                delete expr;
             }
                 break;
             default:

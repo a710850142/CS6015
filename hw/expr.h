@@ -1,104 +1,161 @@
-#ifndef EXPR_H
-#define EXPR_H
+#ifndef MSDSCRIPT_EXPR_H
+#define MSDSCRIPT_EXPR_H
 
-#include <string>
-#include <stdexcept>
 #include <sstream>
+#include <string>
 
-typedef enum {
-    prec_none,    // 无优先级
-    prec_add,     // 加法优先级
-    prec_mult,    // 乘法优先级
-} precedence_t;  // 优先级枚举类型
+class Val;
+
+enum precedence_t {
+    prec_none,
+    prec_equal,
+    prec_add,
+    prec_mult
+};
+
 
 class Expr {
 public:
-    virtual ~Expr() {}
-
-    virtual int interp() const = 0;  // 解释执行
-    virtual bool has_variable() const = 0;  // 是否含有变量
-    virtual Expr* subst(const std::string& varName, const Expr* replacement) const = 0;  // 替换变量
-    std::string to_string();  // 转换为字符串
-    virtual bool equals(const Expr* other) const = 0;  // 比较是否相等
-    virtual void print(std::ostream& os) const = 0;  // 打印表达式
-    void pretty_print(std::ostream& os) const {
-        pretty_print_at(os, prec_none, 0, false);
-    }
-    virtual void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool addParan) const { pretty_print(os); }
-
-    std::string to_pretty_string() const;  // 转换为美观字符串
+    virtual bool equals(Expr* expr)=0;
+    virtual Val* interp() = 0;
+    virtual bool has_variable() = 0;
+    virtual Expr* subst(std::string s, Expr* expr) = 0;
+    virtual void print(std::ostream& out) = 0;
+    std::string to_string();
+    void pretty_print(std::ostream& out);
+    virtual void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) = 0;
+    std::string to_pretty_string();
 };
 
-class Num : public Expr {
-    int value;
-public:
-    Num(int value) : value(value) {}
-    int interp() const override;  // 解释执行
-    bool has_variable() const override;  // 是否含有变量
-    Expr* subst(const std::string& varName, const Expr* replacement) const override;  // 替换变量
-    bool equals(const Expr* other) const override;  // 比较是否相等
-    void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
-    void print(std::ostream& os) const override;  // 打印表达式
+
+class NumExpr : public Expr {
+private:
     int val;
-};
-
-class Add : public Expr {
 public:
-    Add(Expr* lhs, Expr* rhs) : lhs(lhs), rhs(rhs) {}
-    ~Add();
-
-    int interp() const override;  // 解释执行
-    bool has_variable() const override;  // 是否含有变量
-    Expr* subst(const std::string& varName, const Expr* replacement) const override;  // 替换变量
-    bool equals(const Expr* other) const override;  // 比较是否相等
-    void print(std::ostream& os) const override;  // 打印表达式
-    void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
-    Expr* lhs;
-    Expr* rhs;
+    NumExpr(int v);
+    bool equals(Expr* expr) override;
+    Val* interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr* expr) override;
+    void print(std::ostream& out) override;
+    void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) override;
 };
 
-class Mult : public Expr {
+
+class AddExpr : public Expr {
+private:
     Expr* lhs;
     Expr* rhs;
 public:
-    Mult(Expr* lhs, Expr* rhs) : lhs(lhs), rhs(rhs) {}
-    ~Mult();
-
-    int interp() const override;  // 解释执行
-    bool has_variable() const override;  // 是否含有变量
-    Expr* subst(const std::string& varName, const Expr* replacement) const override;  // 替换变量
-    bool equals(const Expr* other) const override;  // 比较是否相等
-    void print(std::ostream& os) const override;  // 打印表达式
-    void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
+    AddExpr(Expr* left, Expr* right);
+    AddExpr(int left, int right);
+    AddExpr(std::string left, int right);
+    AddExpr(int left, std::string right);
+    AddExpr(std::string left, std::string right);
+    AddExpr(int left, Expr* right);
+    AddExpr(Expr* left, int right);
+    bool equals(Expr* expr);
+    Val* interp();
+    bool has_variable();
+    Expr* subst(std::string s, Expr* expr);
+    void print(std::ostream& out);
+    void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet);
 };
+
+
+class MultExpr : public Expr {
+public:
+    Expr* lhs;
+    Expr* rhs;
+public:
+    MultExpr(Expr *left, Expr *right);
+    MultExpr(int left, int right);
+    MultExpr(std::string left, int right);
+    MultExpr(int left, std::string right);
+    MultExpr(std::string left, std::string right);
+    MultExpr(int left, Expr* right);
+    MultExpr(Expr* left, int right);
+    bool equals(Expr* expr);
+    Val* interp();
+    bool has_variable();
+    Expr* subst(std::string s, Expr* expr);
+    void print(std::ostream& out);
+    void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet);
+};
+
 
 class VarExpr : public Expr {
+private:
+    std::string val;
 public:
-    VarExpr(const std::string& name) : name(name) {}
-
-    int interp() const override;  // 解释执行
-    bool has_variable() const override;  // 是否含有变量
-    Expr* subst(const std::string& varName, const Expr* replacement) const override;  // 替换变量
-    bool equals(const Expr* other) const override;  // 比较是否相等
-    void print(std::ostream& os) const override;  // 打印表达式
-    void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
-    std::string name;
+    VarExpr(std::string s);
+    bool equals(Expr* expr);
+    Val* interp();
+    bool has_variable();
+    Expr* subst(std::string s, Expr* expr);
+    void print(std::ostream& out);
+    void pretty_print_at(std::ostream& out, precedence_t prec, std::streampos& newLinePrevPos, bool addParenthesesToLet);
+    std::string getVal();
 };
+
 
 class LetExpr : public Expr {
-    Expr* bodyExpr;
-
+private:
+    std::string variable;
+    Expr* rhs;
+    Expr* body;
 public:
-    LetExpr(const std::string& varName, Expr* bindingExpr, Expr* bodyExpr);
-    ~LetExpr();
-    int interp() const override;  // 解释执行
-    bool has_variable() const override;  // 是否含有变量
-    Expr* subst(const std::string& vName, const Expr* replacement) const override;  // 替换变量
-    bool equals(const Expr* other) const override;  // 比较是否相等
-    void print(std::ostream& os) const override;  // 打印表达式
-    void pretty_print_at(std::ostream &os, precedence_t prec, int ini_pos, bool outerParan) const override;  // 美观打印
-    std::string varName;
-    Expr* bindingExpr;
+    LetExpr(std::string v, Expr* r, Expr* b);
+    bool equals(Expr* expr) override;
+    Val* interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr* expr) override;
+    void print(std::ostream& out) override;
+    void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) override;
 };
 
-#endif // EXPR_H
+class BoolExpr : public Expr {
+private:
+    bool val;
+public:
+    BoolExpr(bool v);
+    bool equals(Expr* rhs) override;
+    Val* interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr* expr) override;
+    void print(std::ostream& out) override;
+    void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) override;
+};
+
+class IfExpr : public Expr {
+private:
+    Expr* test_part;
+    Expr* then_part;
+    Expr* else_part;
+public:
+    IfExpr(Expr* test, Expr* then, Expr* else_);
+    bool equals(Expr* rhs) override;
+    Val* interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr* expr) override;
+    void print(std::ostream& out) override;
+    void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) override;
+};
+
+class EqExpr : public Expr {
+private:
+    Expr* lhs;
+    Expr* rhs;
+public:
+    EqExpr(Expr* left, Expr* right);
+    EqExpr(int left, int right);
+    bool equals(Expr* rhs_) override;
+    Val* interp() override;
+    bool has_variable() override;
+    Expr* subst(std::string s, Expr* expr) override;
+    void print(std::ostream& out) override;
+    void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) override;
+};
+
+
+#endif

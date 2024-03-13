@@ -1,20 +1,21 @@
-#ifndef PARSE_H
-#define PARSE_H
+#ifndef MSDSCRIPT_PARSER_H
+#define MSDSCRIPT_PARSER_H
 
 #include "expr.h"
-#include <istream>
 
-// 解析表达式
-Expr* parse_expr(std::istream &in);
-Expr* parse_primary(std::istream &in);
+Expr* parse_expr(std::istream& in);
+Expr* parse_comparg(std::istream& in);
+Expr* parse_addend(std::istream& in);
+Expr* parse_multicand(std::istream& in);
+Expr* parse_num(std::istream& in);
+Expr* parse_var(std::istream& in);
+Expr* parse_let(std::istream& in);
+Expr* parse_if(std::istream& in);
+std::string parse_keyword(std::istream& in);
+void consume(std::istream& in, int expect, const std::string& message = "consume mismatch");
+void consume(std::istream& in, std::string expect, const std::string& message = "consume mismatch");
+void skip_whitespace(std::istream& in);
+Expr* parse_str(std::string s);
 
-// 解析数字
-Expr* parse_num(std::istream &in);
 
-// 解析字符串表达式为 Expr 对象
-Expr* parse_str(const std::string &s);
-
-// 跳过空白字符
-void skip_whitespace(std::istream &in);
-
-#endif // PARSE_H
+#endif

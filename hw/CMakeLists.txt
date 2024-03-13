@@ -8,6 +8,7 @@ add_executable(msd main.cpp
         exec.cpp
         expr.cpp
         parse.cpp
-        parse-test.cpp
         Test.cpp
-        test_msdscript.cpp)
+        test_msdscript.cpp
+        val.cpp
+        val.h)

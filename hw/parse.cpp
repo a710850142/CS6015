@@ -1,165 +1,184 @@
-#include <iostream>
 #include "parse.h"
+#include <vector>
+#include <set>
 
-static void consume(std::istream &in, int expect);
-void skip_whitespace(std::istream &in);
-Expr *parse_num(std::istream &in);
-Expr *parse_let(std::istream &in);
-
-Expr* parse_expr(std::istream &in) {
-    skip_whitespace(in);
-
-    Expr* left = nullptr;
-
-    // 尝试解析 let 表达式
-    if (in.peek() == 'l') {
-        return parse_let(in);
+// Parses an expression from an input stream
+Expr* parse_expr(std::istream& in) {
+    Expr* lhs = parse_comparg(in); // Parse the left-hand side component of the expression
+    skip_whitespace(in); // Skip any whitespace
+    int c = in.peek(); // Peek at the next character without consuming it
+    if (c == '=') { // Check if it's an equality operator
+        consume(in, "=="); // Consume the equality operator
+        Expr* rhs = parse_expr(in); // Recursively parse the right-hand side of the equality expression
+        return new EqExpr(lhs, rhs); // Return a new equality expression object
     }
-
-    left = parse_primary(in);
-
-    skip_whitespace(in);
-    while (true) {
-        char op = in.peek();
-        if (op == '+' || op == '*') {
-            in.get(); // 消耗运算符
-            Expr* right = parse_primary(in);
-            if (op == '+') {
-                left = new Add(left, right);
-            } else if (op == '*') {
-                left = new Mult(left, right);
-            }
-        } else {
-            break;
-        }
-        skip_whitespace(in);
-    }
-
-    return left;
+    return lhs; // If not an equality expression, return the left-hand side expression
 }
 
-Expr* parse_primary(std::istream &in) {
-    skip_whitespace(in);
+// Parses a component of an expression that could be involved in addition
+Expr* parse_comparg(std::istream& in) {
+    Expr* lhs = parse_addend(in); // Parse the left-hand side operand
+    skip_whitespace(in); // Skip any whitespace
+    int c = in.peek(); // Peek at the next character without consuming it
+    if (c == '+') { // Check if it's an addition operator
+        consume(in, '+'); // Consume the addition operator
+        Expr* rhs = parse_comparg(in); // Recursively parse the right-hand side operand
+        return new AddExpr(lhs, rhs); // Return a new addition expression object
+    }
+    return lhs; // If not an addition, return the left-hand side expression
+}
 
-    int c = in.peek();
-    if ((c == '-') || isdigit(c)) {
-        return parse_num(in);
-    } else if (c == '(') {
-        consume(in, '(');
-        skip_whitespace(in);
-        if (in.peek() == ')') { // 检查是否为空的括号表达式
-            throw std::runtime_error("bad input");
+// Parses an operand of an addition or multiplication
+Expr* parse_addend(std::istream& in) {
+    skip_whitespace(in); // Skip any whitespace
+    Expr* lhs = parse_multicand(in); // Parse the left-hand side operand
+    skip_whitespace(in); // Skip any whitespace
+    int c = in.peek(); // Peek at the next character without consuming it
+    if (c == '*') { // Check if it's a multiplication operator
+        consume(in, '*'); // Consume the multiplication operator
+        Expr* rhs = parse_addend(in); // Recursively parse the right-hand side operand
+        return new MultExpr(lhs, rhs); // Return a new multiplication expression object
+    }
+    std::set<char> ops = {'+', '*', '=', ')', '_'}; // Set of valid operator characters
+    if (c != -1 && ops.find(c) == ops.end()) { // Check if the character is invalid
+        throw std::runtime_error("bad input"); // Throw an error for bad input
+    }
+    return lhs; // If not a multiplication, return the left-hand side expression
+}
+
+// Parses a multiplicand, which could be a number, variable, or parenthesized expression
+Expr* parse_multicand(std::istream& in) {
+    skip_whitespace(in); // Skip any whitespace
+    int c = in.peek(); // Peek at the next character without consuming it
+    if (c == '-' || isdigit(c)) { // If it's a negative sign or digit
+        return parse_num(in); // Parse a number
+    } else if (isalpha(c)) { // If it's an alphabetic character
+        return parse_var(in); // Parse a variable
+    } else if (c == '_') { // If it's an underscore (indicating a keyword)
+        consume(in, c); // Consume the underscore
+        std::string keyword = parse_keyword(in); // Parse the keyword
+        // Parse specific keyword expressions
+        if (keyword == "let") {
+            return parse_let(in);
+        } else if (keyword == "false") {
+            return new BoolExpr(false);
+        } else if (keyword == "true") {
+            return new BoolExpr(true);
+        } else if (keyword == "if") {
+            return parse_if(in);
         }
-        Expr* e = parse_expr(in);
-        skip_whitespace(in); // 在尝试消耗闭括号前，再次跳过任何空格
-        if (in.peek() != ')') { // 确保下一个字符是闭括号
-            throw std::runtime_error("bad input"); // 如果不是，则抛出 "bad input"
-        }
-        consume(in, ')');
-        return e;
-    } else if (isalpha(c)) { // 确保它开始于一个字母
-        std::string varName;
-        while (isalpha(in.peek()) || isdigit(in.peek()) || in.peek() == '_') { // 变量名可以包含字母和数字，检查是否含有下划线
-            char nextChar = in.get();
-            if (nextChar == '_') {
-                throw std::runtime_error("invalid input"); // 如果变量名包含下划线，抛出异常
-            }
-            varName += nextChar;
-        }
-        return new VarExpr(varName);
+        throw std::runtime_error("unknown keyword: " + keyword); // Throw an error for unknown keywords
+    } else if (c == '(') { // If it's an opening parenthesis
+        consume(in, '('); // Consume the parenthesis
+        Expr* expr = parse_expr(in); // Parse the expression within the parentheses
+        skip_whitespace(in); // Skip any whitespace
+        consume(in, ')', "parentheses mismatch"); // Ensure the closing parenthesis is present
+        return expr; // Return the parenthesized expression
     } else {
-        throw std::runtime_error("Unexpected character in input");
+        consume(in, c); // Consume the character
+        throw std::runtime_error("bad input"); // Throw an error for bad input
     }
 }
 
-
-
-Expr *parse_num(std::istream &in) {
-    int n = 0;
+// Parses a numeric value, handling negative numbers as well
+Expr* parse_num(std::istream& in) {
+    int num = 0;
     bool negative = false;
-
-    if (in.peek() == '-') {
+    if (in.peek() == '-') { // Check for a negative sign
         negative = true;
-        in.get(); // 消费负号
-
-        if (!isdigit(in.peek())) {
-            throw std::runtime_error("invalid input"); // 没有数字跟随负号，抛出异常
-        }
+        consume(in, '-'); // Consume the negative sign
     }
-
-    while (isdigit(in.peek())) {
-        int c = in.get(); // 消费数字字符
-        n = n * 10 + (c - '0');
+    if (!isdigit(in.peek())) { // Ensure the next character is a digit
+        throw std::runtime_error("invalid input");
     }
-
+    int c;
+    while (isdigit(c = in.peek())) { // Loop through digits
+        consume(in, c); // Consume each digit
+        num = num * 10 + c - '0'; // Update the number value
+    }
     if (negative) {
-        n = -n;
+        num = -num; // Apply negativity if necessary
     }
-
-    return new Num(n);
+    return new NumExpr(num); // Return a new number expression object
 }
 
-Expr* parse_let(std::istream &in) {
-    std::string token;
-    in >> token;
-    if (token != "let") {
-        throw std::runtime_error("Expected 'let'");
-    }
-    skip_whitespace(in);
+// Parses a "let" expression, which allows for variable binding
+Expr* parse_let(std::istream& in) {
+    std::string errorMsg = "wrong format for let expression";
 
-    std::string varName;
-    in >> varName;
-    skip_whitespace(in);
-
-    consume(in, '=');
-    Expr* bindingExpr = parse_expr(in);
-    skip_whitespace(in);
-
-    std::string inToken;
-    in >> inToken;
-    if (inToken != "_in") {
-        throw std::runtime_error("Expected '_in' in let expression");
-    }
-    Expr* bodyExpr = parse_expr(in);
-    return new LetExpr(varName, bindingExpr, bodyExpr);
+    VarExpr* var = dynamic_cast<VarExpr*>(parse_var(in)); // Parse the variable name
+    skip_whitespace(in); // Skip any whitespace
+    consume(in, '=', errorMsg); // Consume the equals sign
+    Expr* rhs = parse_expr(in); // Parse the right-hand side expression
+    skip_whitespace(in); // Skip any whitespace
+    consume(in, "_in", errorMsg); // Consume the "_in" keyword
+    Expr* body = parse_expr(in); // Parse the body of the let expression
+    return new LetExpr(var->getVal(), rhs, body); // Return a new let expression object
 }
 
-static void consume(std::istream &in, int expect) {
-    int c = in.get();
-    if (c != expect) {
-        throw std::runtime_error("consume mismatch");
+// Parses an "if" expression, including its test, then, and else parts
+Expr* parse_if(std::istream& in) {
+    std::string errorMsg = "wrong format for if expression";
+    Expr* test_part = parse_expr(in); // Parse the test expression
+    consume(in, "_then", errorMsg); // Consume the "_then" keyword
+    Expr* then_part = parse_expr(in); // Parse the then expression
+    consume(in, "_else", errorMsg); // Consume the "_else" keyword
+    Expr* else_part = parse_expr(in); // Parse the else expression
+    return new IfExpr(test_part, then_part, else_part); // Return a new if expression object
+}
+
+// Parses a variable name
+Expr* parse_var(std::istream& in) {
+    skip_whitespace(in); // Skip any whitespace
+    std::vector<char> s; // Vector to hold the variable name characters
+    int c;
+    while (isalpha(c = in.peek())) { // Loop through alphabetic characters
+        consume(in, c); // Consume each character
+        s.push_back(c); // Add each character to the vector
+    }
+    std::set<char> ops = {'+', '*', '=', ')'}; // Set of valid following characters
+    if (c != -1 && !isspace(c) && ops.find(c) == ops.end()) { // Check for invalid characters
+        throw std::runtime_error("invalid variable name");
+    }
+    return new VarExpr(std::string(s.begin(), s.end())); // Return a new variable expression object
+}
+
+// Parses a keyword following an underscore
+std::string parse_keyword(std::istream& in) {
+    std::stringstream ss; // Stringstream to build the keyword
+    char c;
+    while (isalpha(c = in.peek())) { // Loop through alphabetic characters
+        consume(in, c); // Consume each character
+        ss << c; // Add each character to the stringstream
+    }
+    return ss.str(); // Return the built keyword as a string
+}
+
+// Consumes a specified string from the input, throwing an error if not matched
+void consume(std::istream& in, std::string expect, const std::string& message) {
+    for (const char& c : expect) {
+        consume(in, c, message); // Consume each character of the expected string
     }
 }
 
-void skip_whitespace(std::istream &in) {
-    while (isspace(in.peek())) {
-        in.get();
+// Consumes a specified character from the input, throwing an error if not matched
+void consume(std::istream& in, int expect, const std::string& message) {
+    int c = in.get(); // Get the next character
+    if (c != expect) { // If it does not match the expected character
+        throw std::runtime_error(message); // Throw the specified error message
     }
 }
 
-// 假设您已经在 parse.cpp 中包含了 parse.h
-Expr* parse_str(const std::string &s) {
-    std::istringstream iss(s);
-    Expr* expr = nullptr;
-    try {
-        expr = parse_expr(iss);
-        char leftover;
-        if (iss >> leftover) { // 检查是否还有剩余的字符未被解析
-            // 根据剩余字符的类型抛出不同的异常消息
-            if (leftover == ')') {
-                throw std::runtime_error("bad input"); // 如果剩余字符是闭括号
-            } else {
-                throw std::runtime_error("invalid input"); // 如果剩余字符是其他类型
-            }
-        }
-    } catch (const std::runtime_error& e) {
-        // 捕获 parse_expr 抛出的异常，根据具体情况可能需要重新抛出不同的异常
-        std::string msg = e.what();
-        if (msg.find("unexpected characters after expression") != std::string::npos) {
-            throw std::runtime_error("invalid input"); // 重新抛出符合测试期望的异常
-        } else {
-            throw; // 直接重新抛出当前捕获的异常
-        }
+// Skips whitespace characters in the input
+void skip_whitespace(std::istream& in) {
+    int c;
+    while (isspace(c = in.peek())) { // Loop through whitespace characters
+        consume(in, c); // Consume each whitespace character
     }
-    return expr;
+}
+
+// Parses an expression from a string (useful for testing)
+Expr* parse_str(std::string s) {
+    std::istringstream in(s); // Create an input stream from the string
+    return parse_expr(in); // Parse the expression from the input stream
 }
