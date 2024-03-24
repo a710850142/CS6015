@@ -2,77 +2,84 @@
 #include "val.h"
 #include "expr.h"
 
-// expr
+
 std::string Expr::to_string() {
     std::stringstream st("");
-    print(st);  // 利用多态性调用对应子类的print方法
+    print(st);
     return st.str();
 }
+
 
 std::string Expr::to_pretty_string() {
     std::stringstream st("");
-    pretty_print(st);  // 利用多态性调用对应子类的pretty_print方法以获取格式化字符串
+    pretty_print(st);
     return st.str();
 }
 
+
 void Expr::pretty_print(std::ostream &out) {
     std::streampos pos = out.tellp();
-    pretty_print_at(out, prec_none, pos, false); // 调用pretty_print_at实现具体的格式化打印
+    pretty_print_at(out, prec_none, pos, false);
 }
 
-// 数字表达式类
+
 NumExpr::NumExpr(int v) {
-    val = v; // 初始化时存储整数值
+    val = v;
 }
+
 
 bool NumExpr::equals(Expr* expr) {
-    NumExpr *n = dynamic_cast<NumExpr*>(expr); // 动态类型转换，检查是否为NumExpr类型
+    NumExpr *n = dynamic_cast<NumExpr*>(expr);
     if (n == nullptr) {
-        return false; // 类型不匹配，返回false
+        return false;
     }
-    return val == n->val; // 比较数值是否相等
+    return val == n->val;
 }
+
 
 Val* NumExpr::interp() {
-    return new NumVal(val); // 解释执行，返回对应的值对象
+    return new NumVal(val);
 }
 
-bool NumExpr::has_variable() {
-    return false; // 数字表达式不包含变量
-}
 
 Expr* NumExpr::subst(std::string s, Expr *expr) {
-    return this; // 数字表达式不做替换，直接返回自身
+    return this;
 }
+
 
 void NumExpr::print(std::ostream& out) {
-    out << val; // 打印存储的整数值
+    out << val;
 }
 
-void NumExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) {
-    out << val; // 美观打印也是直接输出整数值
+
+void NumExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
+    out << val;
 }
 
-// addexpr
+
 AddExpr::AddExpr(Expr *left, Expr *right) {
     lhs = left;
     rhs = right;
 }
+
 
 AddExpr::AddExpr(int left, int right) {
     lhs = new NumExpr(left);
     rhs = new NumExpr(right);
 }
 
+
 AddExpr::AddExpr(std::string left, int right) {
     lhs = new VarExpr(left);
     rhs = new NumExpr(right);
 }
 
+
 AddExpr::AddExpr(int left, std::string right) {
     lhs = new NumExpr(left);
     rhs = new VarExpr(right);
 }
+
 
 AddExpr::AddExpr(std::string left, std::string right) {
     lhs = new VarExpr(left);
@@ -89,6 +96,17 @@ AddExpr::AddExpr(Expr* left, int right) {
     rhs = new NumExpr(right);
 }
 
+AddExpr::AddExpr(std::string left, Expr* right) {
+    lhs = new VarExpr(left);
+    rhs = right;
+}
+
+AddExpr::AddExpr(Expr* left, std::string right) {
+    lhs = left;
+    rhs = new VarExpr(right);
+}
+
+
 bool AddExpr::equals(Expr* expr) {
     AddExpr *a = dynamic_cast<AddExpr*>(expr);
     if (a == NULL) {
@@ -97,17 +115,16 @@ bool AddExpr::equals(Expr* expr) {
     return lhs->equals(a->lhs) && rhs->equals(a->rhs);
 }
 
+
 Val* AddExpr::interp() {
     return lhs->interp()->add_to(rhs->interp());
 }
 
-bool AddExpr::has_variable() {
-    return lhs->has_variable() || rhs->has_variable();
-}
 
 Expr* AddExpr::subst(std::string s, Expr *expr) {
     return new AddExpr(lhs->subst(s, expr), rhs->subst(s, expr));
 }
+
 
 void AddExpr::print(std::ostream& out) {
     out << "(";
@@ -117,62 +134,72 @@ void AddExpr::print(std::ostream& out) {
     out << ")";
 }
 
-void AddExpr::pretty_print_at(std::ostream &out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) {
-    bool addParentheses = prec_add <= precedence;
-    if (addParentheses) {
+
+void AddExpr::pretty_print_at(std::ostream &out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
+    bool printParen = prec_add <= precedence;
+    if (printParen) {
         out << "(";
     }
     lhs->pretty_print_at(out, prec_add, newLinePrevPos, true);
     out << " + ";
     // let as right arg in AddExpr never need parentheses
     rhs->pretty_print_at(out, prec_equal, newLinePrevPos, false);
-    if (addParentheses) {
+    if (printParen) {
         out << ")";
     }
 }
-// 乘法表达式类，表示两个表达式的乘积
+
+
 MultExpr::MultExpr(Expr *left, Expr *right) {
-    lhs = left;  // 左子表达式
-    rhs = right; // 右子表达式
+    lhs = left;
+    rhs = right;
 }
 
-// 构造函数重载，允许直接使用整数创建乘法表达式
+
 MultExpr::MultExpr(int left, int right) {
-    lhs = new NumExpr(left); // 左侧创建数字表达式
-    rhs = new NumExpr(right); // 右侧创建数字表达式
+    lhs = new NumExpr(left);
+    rhs = new NumExpr(right);
 }
 
-// 构造函数重载，左侧为变量名，右侧为整数
+
 MultExpr::MultExpr(std::string left, int right) {
-    lhs = new VarExpr(left); // 左侧创建变量表达式
-    rhs = new NumExpr(right); // 右侧创建数字表达式
+    lhs = new VarExpr(left);
+    rhs = new NumExpr(right);
 }
 
-// 构造函数重载，左侧为整数，右侧为变量名
+
 MultExpr::MultExpr(int left, std::string right) {
-    lhs = new NumExpr(left); // 左侧创建数字表达式
-    rhs = new VarExpr(right); // 右侧创建变量表达式
+    lhs = new NumExpr(left);
+    rhs = new VarExpr(right);
 }
 
-// 构造函数重载，两侧均为变量名
+
 MultExpr::MultExpr(std::string left, std::string right) {
-    lhs = new VarExpr(left); // 左侧创建变量表达式
-    rhs = new VarExpr(right); // 右侧创建变量表达式
+    lhs = new VarExpr(left);
+    rhs = new VarExpr(right);
 }
 
-// 构造函数重载，左侧为整数，右侧为表达式
 MultExpr::MultExpr(int left, Expr* right) {
-    lhs = new NumExpr(left); // 左侧创建数字表达式
-    rhs = right; // 右侧直接使用传入的表达式
+    lhs = new NumExpr(left);
+    rhs = right;
 }
 
-// 构造函数重载，左侧为表达式，右侧为整数
 MultExpr::MultExpr(Expr* left, int right) {
-    lhs = left; // 左侧直接使用传入的表达式
-    rhs = new NumExpr(right); // 右侧创建数字表达式
+    lhs = left;
+    rhs = new NumExpr(right);
 }
 
-// 检查两个乘法表达式是否相等
+MultExpr::MultExpr(std::string left, Expr* right) {
+    lhs = new VarExpr(left);
+    rhs = right;
+}
+
+MultExpr::MultExpr(Expr* left, std::string right) {
+    lhs = left;
+    rhs = new VarExpr(right);
+}
+
+
 bool MultExpr::equals(Expr* expr) {
     MultExpr *m = dynamic_cast<MultExpr*>(expr);
     if (m == NULL) {
@@ -181,22 +208,17 @@ bool MultExpr::equals(Expr* expr) {
     return lhs->equals(m->lhs) && rhs->equals(m->rhs);
 }
 
-// 解释执行乘法表达式，返回乘积的值
+
 Val* MultExpr::interp() {
     return lhs->interp()->mult_with(rhs->interp());
 }
 
-// 检查乘法表达式中是否含有变量
-bool MultExpr::has_variable() {
-    return lhs->has_variable() || rhs->has_variable();
-}
 
-// 替换乘法表达式中的变量
 Expr* MultExpr::subst(std::string s, Expr *expr) {
     return new MultExpr(lhs->subst(s, expr), rhs->subst(s, expr));
 }
 
-// 将乘法表达式转换为字符串形式
+
 void MultExpr::print(std::ostream& out) {
     out << "(";
     lhs -> print(out);
@@ -205,26 +227,26 @@ void MultExpr::print(std::ostream& out) {
     out << ")";
 }
 
-// 根据优先级在乘法表达式周围添加括号，进行美观打印
-void MultExpr::pretty_print_at(std::ostream &out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) {
-    bool addParentheses = prec_mult <= precedence;
-    if (addParentheses) {
+
+void MultExpr::pretty_print_at(std::ostream &out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
+    bool printParen = prec_mult <= precedence;
+    if (printParen) {
         out << "(";
     }
     lhs->pretty_print_at(out, prec_mult, newLinePrevPos, true);
     out << " * ";
-    rhs->pretty_print_at(out, prec_add, newLinePrevPos, addParenthesesToLet && !addParentheses);
-    if (addParentheses) {
+    // add parentheses for rhs when : 1. rhs is let 2. the outermost mult expression is followed with an add expression
+    rhs->pretty_print_at(out, prec_add, newLinePrevPos, addParen && !printParen);
+    if (printParen) {
         out << ")";
     }
 }
 
-// 变量表达式类，表示一个变量
+
 VarExpr::VarExpr(std::string s) {
-    val = s; // 存储变量名
+    val = s;
 }
 
-// 检查两个变量表达式是否相等
 bool VarExpr::equals(Expr* expr) {
     VarExpr *var = dynamic_cast<VarExpr*>(expr);
     if (var == NULL) {
@@ -233,17 +255,12 @@ bool VarExpr::equals(Expr* expr) {
     return val == var->val;
 }
 
-// 尝试解释执行变量表达式时抛出异常，因为变量无法直接求值
+
 Val * VarExpr::interp() {
     throw std::runtime_error("A variable has no value!");
 }
 
-// 变量表达式总是含有变量
-bool VarExpr::has_variable() {
-    return true;
-}
 
-// 替换变量表达式中的变量
 Expr* VarExpr::subst(std::string s, Expr* expr) {
     if (val == s) {
         return expr;
@@ -251,29 +268,28 @@ Expr* VarExpr::subst(std::string s, Expr* expr) {
     return this;
 }
 
-// 将变量表达式转换为字符串形式
+
 void VarExpr::print(std::ostream& out) {
     out << val;
 }
 
-// 美观打印变量表达式，直接输出变量名
-void VarExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) {
+
+void VarExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
     out << val;
 }
 
-// 获取变量名
 std::string VarExpr::getVal() {
     return val;
 }
 
-// Let表达式类，表示let绑定表达式
+
 LetExpr::LetExpr(std::string v, Expr* r, Expr* b) {
-    variable = v;  // 被绑定的变量名
-    rhs = r;       // 右侧表达式，其值将绑定到变量
-    body = b;      // let表达式绑定后执行的主体表达式
+    variable = v;
+    rhs = r;
+    body = b;
 }
 
-// 检查两个Let表达式是否相等
+
 bool LetExpr::equals(Expr* expr) {
     LetExpr* other = dynamic_cast<LetExpr*>(expr);
     if (other == nullptr) {
@@ -282,30 +298,22 @@ bool LetExpr::equals(Expr* expr) {
     return variable == other->variable && rhs->equals(other->rhs) && body->equals(other->body);
 }
 
-// 解释执行Let表达式
+
 Val * LetExpr::interp() {
-    Val* rhs_val = rhs->interp();  // 计算右侧表达式的值
-    // 替换主体表达式中的变量为右侧表达式的值，然后解释执行主体表达式
+    Val* rhs_val = rhs->interp();
     return body->subst(variable, rhs_val->to_expr())->interp();
 }
 
-// 检查Let表达式是否包含变量
-bool LetExpr::has_variable() {
-    return rhs->has_variable() || body->has_variable();
-}
 
-// 在Let表达式中替换变量
 Expr* LetExpr::subst(std::string s, Expr* expr) {
-    Expr* temp = rhs->subst(s, expr);  // 替换右侧表达式中的变量
-    // 如果当前Let绑定的变量名与要替换的变量名相同，则不替换主体表达式中的该变量
+    Expr* temp = rhs->subst(s, expr);
     if (variable == s) {
         return new LetExpr(variable, temp, body);
     }
-    // 否则，替换主体表达式中的变量
     return new LetExpr(variable, temp, body->subst(s, expr));
 }
 
-// 打印Let表达式
+
 void LetExpr::print(std::ostream& out) {
     out << "(_let " << variable << "=";
     rhs->print(out);
@@ -314,9 +322,9 @@ void LetExpr::print(std::ostream& out) {
     out << ")";
 }
 
-// 根据上下文在Let表达式外添加括号进行美观打印
-void LetExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) {
-    if (addParenthesesToLet) {
+
+void LetExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
+    if (addParen) {
         out << "(";
     }
     int indentation = out.tellp() - newLinePrevPos;
@@ -329,17 +337,15 @@ void LetExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::s
     out << "_in  ";
     body->pretty_print_at(out, prec_none, newLinePrevPos, false);
 
-    if (addParenthesesToLet) {
+    if (addParen) {
         out << ")";
     }
 }
 
-// Bool表达式类，表示布尔值
 BoolExpr::BoolExpr(bool v) {
-    val = v;  // 存储布尔值
+    val = v;
 }
 
-// 检查两个Bool表达式是否相等
 bool BoolExpr::equals(Expr* rhs) {
     BoolExpr* other = dynamic_cast<BoolExpr*>(rhs);
     if (other == nullptr) {
@@ -348,39 +354,35 @@ bool BoolExpr::equals(Expr* rhs) {
     return val == other->val;
 }
 
-// 解释执行Bool表达式，返回布尔值
 Val* BoolExpr::interp() {
     return new BoolVal(val);
 }
 
-// Bool表达式不包含变量
-bool BoolExpr::has_variable() {
-    return false;
-}
-
-// 在Bool表达式中替换变量，实际上不进行任何操作，直接返回自身
 Expr* BoolExpr::subst(std::string s, Expr* expr) {
     return this;
 }
 
-// 打印Bool表达式
 void BoolExpr::print(std::ostream& out) {
     val ? out << "_true" : out << "_false";
 }
 
-// 美观打印Bool表达式
-void BoolExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) {
+void BoolExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
     val ? out << "_true" : out << "_false";
 }
 
-// If表达式类，表示条件表达式
+
 IfExpr::IfExpr(Expr* test, Expr* then, Expr* else_) {
-    test_part = test;  // 条件部分
-    then_part = then;  // 条件为真时执行的表达式
-    else_part = else_; // 条件为假时执行的表达式
+    test_part = test;
+    then_part = then;
+    else_part = else_;
 }
 
-// 检查两个If表达式是否相等
+IfExpr::IfExpr(bool test, Expr* then, Expr* else_) {
+    test_part = new BoolExpr(test);
+    then_part = then;
+    else_part = else_;
+}
+
 bool IfExpr::equals(Expr* rhs) {
     IfExpr* other = dynamic_cast<IfExpr*>(rhs);
     if (other == nullptr) {
@@ -389,26 +391,17 @@ bool IfExpr::equals(Expr* rhs) {
     return test_part->equals(other->test_part) && then_part->equals(other->then_part) && else_part->equals(other->else_part);
 }
 
-// 解释执行If表达式
 Val* IfExpr::interp() {
-    // 根据条件部分的值决定执行then部分还是else部分
     if (test_part->interp()->is_true()) {
         return then_part->interp();
     }
     return else_part->interp();
 }
 
-// 检查If表达式是否包含变量
-bool IfExpr::has_variable() {
-    return test_part->has_variable() || then_part->has_variable() || else_part->has_variable();
-}
-
-// 在If表达式中替换变量
 Expr* IfExpr::subst(std::string s, Expr* expr) {
     return new IfExpr(test_part->subst(s, expr), then_part->subst(s, expr), else_part->subst(s, expr));
 }
 
-// 打印If表达式
 void IfExpr::print(std::ostream& out) {
     out << "(_if ";
     test_part->print(out);
@@ -419,9 +412,8 @@ void IfExpr::print(std::ostream& out) {
     out << ")";
 }
 
-// 根据上下文在If表达式外添加括号进行美观打印
-void IfExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) {
-    if (addParenthesesToLet) {
+void IfExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
+    if (addParen) {
         out << "(";
     }
     int indentation = out.tellp() - newLinePrevPos;
@@ -438,78 +430,185 @@ void IfExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::st
     out << std::string(indentation, ' ') << "_else ";
     else_part->pretty_print_at(out, prec_none, newLinePrevPos, false);
 
-    if (addParenthesesToLet) {
+    if (addParen) {
         out << ")";
     }
 }
 
-//eqexpr
-// 等于表达式类，用于表示两个表达式的等值比较
+
 EqExpr::EqExpr(Expr* left, Expr* right) {
-    lhs = left;  // 左侧子表达式
-    rhs = right; // 右侧子表达式
+    lhs = left;
+    rhs = right;
 }
 
-// 构造函数重载，允许直接用整数进行等于比较的创建
 EqExpr::EqExpr(int left, int right) {
-    lhs = new NumExpr(left); // 将左侧整数转换为数字表达式
-    rhs = new NumExpr(right); // 将右侧整数转换为数字表达式
+    lhs = new NumExpr(left);
+    rhs = new NumExpr(right);
 }
 
-// 检查两个等于表达式是否相等
+EqExpr::EqExpr(std::string left, int right) {
+    lhs = new VarExpr(left);
+    rhs = new NumExpr(right);
+}
+
 bool EqExpr::equals(Expr* rhs_) {
     EqExpr* other = dynamic_cast<EqExpr*>(rhs_);
     if (other == nullptr) {
-        return false; // 类型转换失败表示类型不匹配
+        return false;
     }
-    // 递归地比较两边的子表达式是否相等
     return lhs->equals(other->lhs) && rhs->equals(other->rhs);
 }
 
-// 解释执行等于表达式，返回一个表示比较结果的布尔值
 Val* EqExpr::interp() {
-    // 分别解释执行左右子表达式，并比较它们的值是否相等
     return new BoolVal(lhs->interp()->equals(rhs->interp()));
 }
 
-// 检查等于表达式是否包含变量
-bool EqExpr::has_variable() {
-    // 如果左侧或右侧子表达式包含变量，则返回true
-    return lhs->has_variable() || rhs->has_variable();
-}
-
-// 在等于表达式中替换变量
 Expr *EqExpr::subst(std::string s, Expr* expr) {
-    // 分别在左右子表达式中替换变量，返回一个新的等于表达式
     return new EqExpr(lhs->subst(s, expr), rhs->subst(s, expr));
 }
 
-// 将等于表达式转换为字符串形式
 void EqExpr::print(std::ostream& out) {
     out << "(";
-    lhs->print(out); // 打印左侧子表达式
-    out << "==";     // 打印等于符号
-    rhs->print(out); // 打印右侧子表达式
+    lhs->print(out);
+    out << "==";
+    rhs->print(out);
     out << ")";
 }
 
-// 根据优先级在等于表达式周围添加括号进行美观打印
 void EqExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos,
-                             bool addParenthesesToLet) {
-    bool addParentheses = prec_equal <= precedence; // 判断当前上下文是否需要添加括号
-    if (addParentheses) {
+                             bool addParen) {
+    bool printParen = prec_equal <= precedence;
+    if (printParen) {
         out << "(";
     }
-
-    // 美观打印左侧子表达式
     lhs->pretty_print_at(out, prec_equal, newLinePrevPos, true);
     out << " == ";
-    // 美观打印右侧子表达式，注意这里传递的优先级信息确保正确地添加括号
-    rhs->pretty_print_at(out, prec_none, newLinePrevPos, !addParentheses && addParenthesesToLet);
-    if (addParentheses) {
+    rhs->pretty_print_at(out, prec_none, newLinePrevPos, !printParen && addParen);
+    if (printParen) {
         out << ")";
     }
 }
+// Constructor for a function expression with a single formal argument and a body expression.
+FunExpr::FunExpr(std::string arg, Expr* expr) {
+    formal_arg = arg; // Set the formal argument of the function.
+    body = expr;      // Set the body of the function.
+}
 
+// Method to compare this function expression with another expression for equality.
+bool FunExpr::equals(Expr *rhs) {
+    FunExpr* other = dynamic_cast<FunExpr*>(rhs); // Attempt to cast the right-hand side to a FunExpr.
+    if (other == nullptr) {
+        return false; // If casting fails, they cannot be equal (not both FunExpr).
+    }
+    // Check if both the formal argument and body are equal.
+    return formal_arg == other->formal_arg && body->equals(other->body);
+}
 
+// Interpret the function expression by creating a new function value.
+Val* FunExpr::interp() {
+    return new FunVal(formal_arg, body); // Return a new function value with the same formal argument and body.
+}
 
+// Substitute occurrences of a variable with an expression in the function body, but not if the variable is the formal argument.
+Expr* FunExpr::subst(std::string s, Expr* expr) {
+    if (formal_arg == s) {
+        return this; // If the variable is the formal argument, return the function unchanged.
+    }
+    // Otherwise, return a new FunExpr with the body substituted.
+    return new FunExpr(formal_arg, body->subst(s, expr));
+}
+
+// Print the function expression in a simple form to an output stream.
+void FunExpr::print(std::ostream& out) {
+    out << "(_fun (" << formal_arg << ") "; // Start with the function syntax.
+    body->print(out); // Print the body of the function.
+    out << ")"; // Close the function expression.
+}
+
+// Pretty-print the function expression with proper indentation and line breaks.
+void FunExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
+    if (addParen) {
+        out << "("; // Optionally add opening parenthesis.
+    }
+    int indent = out.tellp() - newLinePrevPos; // Calculate current indentation.
+    out << "_fun (" << formal_arg << ") \n"; // Print the function signature with a line break.
+    newLinePrevPos = out.tellp(); // Update the position for new line indentation.
+
+    out << std::string(indent + 2, ' '); // Add indentation for the body.
+    body->pretty_print_at(out, prec_none, newLinePrevPos, false); // Print the body with updated indentation.
+    if (addParen) {
+        out << ")"; // Optionally add closing parenthesis.
+    }
+}
+
+// 构造函数，接受一个表示函数和一个表示实际参数的表达式
+CallExpr::CallExpr(Expr* func, Expr* arg) {
+    to_be_called = func; // 被调用的函数表达式
+    actual_arg = arg; // 实际参数表达式
+}
+
+// 构造函数，接受一个表示函数的表达式和一个整数作为实际参数
+CallExpr::CallExpr(Expr* func, int n) {
+    to_be_called = func; // 被调用的函数表达式
+    actual_arg = new NumExpr(n); // 使用整数创建一个数值表达式作为实际参数
+}
+
+// 构造函数，接受一个表示函数名的字符串和一个整数作为实际参数
+CallExpr::CallExpr(std::string funcName, int n) {
+    to_be_called = new VarExpr(funcName); // 使用函数名创建一个变量表达式作为被调用的函数
+    actual_arg = new NumExpr(n); // 使用整数创建一个数值表达式作为实际参数
+}
+
+// 构造函数，接受一个表示函数名的字符串和一个表示实际参数的表达式
+CallExpr::CallExpr(std::string funcName, Expr* arg) {
+    to_be_called = new VarExpr(funcName); // 使用函数名创建一个变量表达式作为被调用的函数
+    actual_arg = arg; // 实际参数表达式
+}
+
+// 构造函数，接受两个表示函数名的字符串，分别作为被调用的函数和实际参数
+CallExpr::CallExpr(std::string funcName1, std::string funcName2) {
+    to_be_called = new VarExpr(funcName1); // 使用第一个函数名创建一个变量表达式作为被调用的函数
+    actual_arg = new VarExpr(funcName2); // 使用第二个函数名创建一个变量表达式作为实际参数
+}
+
+// 检查当前调用表达式是否等于另一个表达式
+bool CallExpr::equals(Expr* rhs) {
+    CallExpr* other = dynamic_cast<CallExpr*>(rhs); // 尝试将rhs转换为CallExpr*
+    if (other == nullptr) {
+        return false; // 如果转换失败，则不相等
+    }
+    // 比较被调用的函数和实际参数是否相等
+    return to_be_called->equals(other->to_be_called) && actual_arg->equals(other->actual_arg);
+}
+
+// 对调用表达式进行求值
+Val* CallExpr::interp() {
+    // 首先对被调用的函数进行求值，然后调用求值结果上的call方法，传入实际参数的求值结果
+    return to_be_called->interp()->call(actual_arg->interp());
+}
+
+// 替换表达式中的变量
+Expr* CallExpr::subst(std::string s, Expr* expr) {
+    // 分别对被调用的函数和实际参数进行替换，然后创建一个新的CallExpr作为结果
+    return new CallExpr(to_be_called->subst(s, expr), actual_arg->subst(s, expr));
+}
+
+// 将调用表达式打印到输出流
+void CallExpr::print(std::ostream& out) {
+    to_be_called->print(out); // 打印被调用的函数
+    out << "(";
+    actual_arg->print(out); // 打印实际参数
+    out << ")";
+}
+
+void CallExpr::pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) {
+    VarExpr* tmp1 = dynamic_cast<VarExpr*>(to_be_called);
+    CallExpr* tmp2 = dynamic_cast<CallExpr*>(to_be_called);
+    bool printParen = tmp1 == nullptr && tmp2 == nullptr;
+    if (printParen) out << "(";
+    to_be_called->pretty_print_at(out, prec_none, newLinePrevPos, false);
+    if (printParen) out << ")";
+    out << "(";
+    actual_arg->pretty_print_at(out, prec_none, newLinePrevPos, false);
+    out << ")";
+}

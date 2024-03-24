@@ -131,42 +131,6 @@ TEST_CASE("Interp") {
     }
 }
 
-TEST_CASE("has_variable") {
-    SECTION("NumExpr") {
-        CHECK(!(new NumExpr(3)) -> has_variable());
-    }
-
-    SECTION("Add_simple") {
-        CHECK((new AddExpr(7, "x")) -> has_variable());
-        CHECK(!(new AddExpr(2, 3)) -> has_variable());
-    }
-
-    SECTION("Add_nested") {
-        AddExpr add1(new AddExpr(1, 5), new AddExpr(new NumExpr(1), new AddExpr(9, "speed")));
-        AddExpr add2(new AddExpr(1010, 2), new MultExpr(0, 10000));
-        CHECK(add1.has_variable());
-        CHECK(!add2.has_variable());
-    }
-
-    SECTION("Mult_simple") {
-        MultExpr mult1(3, 2);
-        MultExpr mult2(8, "yy");
-        CHECK(!mult1.has_variable());
-        CHECK(mult2.has_variable());
-    }
-
-    SECTION("Mult_nested") {
-        MultExpr mult1(new AddExpr(2, 3), new MultExpr(4, 5));
-        MultExpr mult2(new MultExpr(1, 5), new AddExpr(new NumExpr(1), new AddExpr(9, "scale")));
-        CHECK(!mult1.has_variable());
-        CHECK(mult2.has_variable());
-    }
-
-    SECTION("Variable") {
-        CHECK((new VarExpr("any thing")) -> has_variable());
-    }
-}
-
 TEST_CASE("subst") {
     SECTION("NumExpr") {
         CHECK((new NumExpr(4)) -> subst("x", new NumExpr(3)) -> equals(new NumExpr(4)));
@@ -350,16 +314,6 @@ TEST_CASE("let") {
         CHECK_THROWS_WITH(letError.interp(), "A variable has no value!");
     }
 
-    SECTION("has_variable") {
-        LetExpr let1("x", new NumExpr(5), new AddExpr(3, 1));
-        CHECK(!let1.has_variable());
-        CHECK(letBase1.has_variable()); // body has variable
-        LetExpr let2("x", new VarExpr("x + 1"), new AddExpr(3, 1)); // rhs has variable
-        CHECK(let2.has_variable());
-        LetExpr let3("x", new VarExpr("x"), new AddExpr("x", 1)); // both has variable
-        CHECK(let3.has_variable());
-    }
-
     SECTION("print") {
         LetExpr let1("x",
                      new NumExpr(5),
@@ -458,7 +412,6 @@ TEST_CASE("parse") {
     }
 
     SECTION("let + mult + add") {
-        // parentheses and spaces
         std::string let1a = "_let x = 5 _in x + 1";
         CHECK(parse_str(let1a)->equals(&letBase1));
         std::string let1b = "(_let x = 5 _in x + 1)";
@@ -501,7 +454,6 @@ TEST_CASE("parse") {
         std::string let6c = "_led x = 55 _in";
         CHECK_THROWS_WITH(parse_str(let6c), "unknown keyword: led");
 
-        // interp error
         std::string let7 = "_let x = y _in x + 1";
         CHECK_THROWS_WITH(parse_str(let7)->interp(), "A variable has no value!");
 
@@ -511,7 +463,6 @@ TEST_CASE("parse") {
         LetExpr let8res("x", &letBase1, new AddExpr("x", 6));
         CHECK(parse_str(let8)->equals(&let8res));
 
-        // this case is from my test generator!!
         std::string let9 = "(_let FPsk = _let uDiak = 316958877\n"
                            "             _in  1733846665 * P\n"
                            " _in  1735924491) * 1996497710";
@@ -542,6 +493,10 @@ TEST_CASE("parse") {
         EqExpr eq2(&letBase1, new NumExpr(2));
         CHECK(eq2.to_pretty_string() == "(_let x = 5\n"
                                         " _in  x + 1) == 2");
+        std::string eq3 = "1 + 1 == 2 + 0";
+        Expr* temp = parse_str(eq3);
+        CHECK(parse_str(eq3)->equals(new EqExpr(new AddExpr(1, 1), new AddExpr(2, 0))));
+        CHECK(parse_str(eq3)->interp()->equals(new BoolVal(true)));
     }
 }
 
@@ -643,10 +598,6 @@ TEST_CASE("BoolExpr") {
         CHECK(!BoolExpr(true).interp()->equals(new NumVal(3)));
     }
 
-    SECTION("has_variable") {
-        CHECK(!BoolExpr(true).has_variable());
-    }
-
     SECTION("subst") {
         CHECK(BoolExpr(true).subst("x", new NumExpr(1))->equals(new BoolExpr(true)));
     }
@@ -685,16 +636,6 @@ TEST_CASE("EqExpr") {
         CHECK(eq4.interp()->equals(new BoolVal(true)));
         CHECK(eq5.interp()->equals(new BoolVal(true)));
         CHECK(eq6.interp()->equals(new BoolVal(false)));
-    }
-
-    SECTION("has_variable") {
-        CHECK(!eq1.has_variable());
-        CHECK(!eq2.has_variable());
-        CHECK(eq3.has_variable());
-        CHECK(!eq4.has_variable());
-        CHECK(!eq5.has_variable());
-        CHECK(eq6.has_variable());
-        CHECK((new EqExpr(new NumExpr(1), new VarExpr("x")))->has_variable());
     }
 
     SECTION("subst") {
@@ -767,12 +708,16 @@ TEST_CASE("EqExpr") {
         EqExpr eq16(new NumExpr(2), new AddExpr(new NumExpr(3), &letBase));
         CHECK(eq16.to_pretty_string() == "2 == 3 + _let x = 1\n"
                                          "         _in  x + 1");
-        // consecutive ==
+        CHECK(eq16.interp()->equals(new BoolVal(false)));
+
         EqExpr eq17(&eq4, new BoolExpr(true));
         CHECK(eq17.to_pretty_string() == "(2 == 1 + 1) == _true");
         EqExpr eq18(new BoolExpr(false), &eq4);
         CHECK(eq18.to_pretty_string() == "_false == 2 == 1 + 1");
-
+        EqExpr eq19(new AddExpr(1, 1), new AddExpr(2, 0));
+        CHECK(eq19.interp());
+        LetExpr eq20("x", new NumExpr(1), new EqExpr(new VarExpr("x"), new NumExpr(1)));
+        CHECK(eq20.interp());
     }
 }
 
@@ -804,18 +749,6 @@ TEST_CASE("IfExpr") {
         CHECK(ifBase3.interp()->equals(new NumVal(88)));
         CHECK_THROWS_WITH(ifBase4.interp(), "add of non-number");
         CHECK_THROWS_WITH(ifBase5.interp(), "A variable has no value!");
-    }
-
-    SECTION("has_variable") {
-        CHECK(!ifBase1.has_variable());
-        CHECK(!ifBase2.has_variable());
-        CHECK(!ifBase3.has_variable());
-        CHECK(!ifBase4.has_variable());
-        CHECK(ifBase5.has_variable());
-        IfExpr if1(new BoolExpr(true), new VarExpr("x"), new NumExpr(1));
-        CHECK(if1.has_variable());
-        IfExpr if2(new BoolExpr(true), new NumExpr(1), new VarExpr("x"));
-        CHECK(if2.has_variable());
     }
 
     SECTION("subst") {
@@ -928,5 +861,153 @@ TEST_CASE("IfExpr") {
                                          "         _then 1\n"
                                          "         _else 2) + 5");
         CHECK(parse_str(if14.to_string())->equals(&if14));
+    }
+}
+
+TEST_CASE("FunExpr") {
+    FunExpr func1("x", new AddExpr("x", 1));
+    FunExpr func2("x", new FunExpr("y", new AddExpr(new MultExpr("x", "x"), new MultExpr("y", "y"))));
+
+    SECTION("equals") {
+        CHECK(!func1.equals(new NumExpr(1)));
+        CHECK(!func1.equals(new FunExpr("x", new AddExpr("x", 2))));
+        CHECK(!func1.equals(new FunExpr("y", new AddExpr("x", 1))));
+        CHECK(func1.equals(new FunExpr("x", new AddExpr("x", 1))));
+    }
+
+    SECTION("print") {
+        CHECK(func1.to_string() == "(_fun (x) (x+1))");
+        CHECK(func2.to_string() == "(_fun (x) (_fun (y) ((x*x)+(y*y))))");
+    }
+
+    SECTION("pretty_print") {
+        CHECK(func1.to_pretty_string() == "_fun (x) \n"
+                                          "  x + 1");
+
+        CHECK(func2.to_pretty_string() == "_fun (x) \n"
+                                          "  _fun (y) \n"
+                                          "    x * x + y * y");
+    }
+}
+
+TEST_CASE("CallExpr") {
+    FunExpr func1("x", new AddExpr("x", 1));
+    FunExpr func2("y", new AddExpr("y", 2));
+    CallExpr call1(&func1, 2);
+
+    SECTION("equals") {
+        CHECK(call1.equals(new CallExpr(new FunExpr("x", new AddExpr("x", 1)), 2)));
+        CHECK(!call1.equals(new NumExpr(2)));
+        CHECK(!call1.equals(new CallExpr(&func1, 3)));
+        CHECK(!call1.equals(new CallExpr(new FunExpr("x", new MultExpr("x", 2)), 2)));
+    }
+
+    SECTION("interp + print + pretty-print") {
+        CHECK(call1.interp()->equals(new NumVal(3)));
+        CHECK(call1.to_string() == "(_fun (x) (x+1))(2)");
+        CHECK(call1.to_pretty_string() == "(_fun (x) \n"
+                                          "   x + 1)(2)");
+        // let + fun + call
+        LetExpr call2("f", &func1, new CallExpr(new VarExpr("f"), 2));
+        CHECK(call2.interp()->equals(new NumVal(3)));
+        CHECK(call2.to_string() == "(_let f=(_fun (x) (x+1)) _in f(2))");
+        CHECK(call2.to_pretty_string() == "_let f = _fun (x) \n"
+                                          "           x + 1\n"
+                                          "_in  f(2)");
+        // let + fun + (if + call)
+        LetExpr call3("f", &func1, new IfExpr(false, new CallExpr("f", 5), new CallExpr("f", 6)));
+        CHECK(call3.interp()->equals(new NumVal(7)));
+        CHECK(call3.to_pretty_string() == "_let f = _fun (x) \n"
+                                          "           x + 1\n"
+                                          "_in  _if _false\n"
+                                          "     _then f(5)\n"
+                                          "     _else f(6)");
+
+        // 2 func2
+        LetExpr call4("f", &func1, new LetExpr("g", &func2, new IfExpr(true, new CallExpr("f", 5), new CallExpr("g", 6))));
+        CHECK(call4.interp()->equals(new NumVal(6)));
+        CHECK(call4.to_pretty_string() == "_let f = _fun (x) \n"
+                                          "           x + 1\n"
+                                          "_in  _let g = _fun (y) \n"
+                                          "                y + 2\n"
+                                          "     _in  _if _true\n"
+                                          "          _then f(5)\n"
+                                          "          _else g(6)");
+        LetExpr call5("f", &func1, new LetExpr("g", new FunExpr("y", new CallExpr("f", new AddExpr("y", 2))), new CallExpr("g", 5)));
+        CHECK(call5.interp()->equals(new NumVal(8)));
+        CHECK(call5.to_pretty_string() == "_let f = _fun (x) \n"
+                                          "           x + 1\n"
+                                          "_in  _let g = _fun (y) \n"
+                                          "                f(y + 2)\n"
+                                          "     _in  g(5)");
+        LetExpr call6("f", &func1, new LetExpr("g", new FunExpr("x", new AddExpr(new CallExpr("f", 2), "x")), new CallExpr("g", 5)));
+        CHECK(call6.interp()->equals(new NumVal(8)));
+        CHECK(call6.to_pretty_string() == "_let f = _fun (x) \n"
+                                          "           x + 1\n"
+                                          "_in  _let g = _fun (x) \n"
+                                          "                f(2) + x\n"
+                                          "     _in  g(5)");
+        LetExpr call7("f", new IfExpr(false, &func1, &func2), new CallExpr("f", 5));
+        CHECK(call7.interp()->equals(new NumVal(7)));
+        CHECK(call7.to_pretty_string() == "_let f = _if _false\n"
+                                          "         _then _fun (x) \n"
+                                          "                 x + 1\n"
+                                          "         _else _fun (y) \n"
+                                          "                 y + 2\n"
+                                          "_in  f(5)");
+        CallExpr call8(new IfExpr(false, &func1, &func2), new NumExpr(5));
+        CHECK(call8.interp()->equals(new NumVal(7)));
+        CHECK(call8.to_pretty_string() == "(_if _false\n"
+                                          " _then _fun (x) \n"
+                                          "         x + 1\n"
+                                          " _else _fun (y) \n"
+                                          "         y + 2)(5)");
+        LetExpr call9("f", new FunExpr("g", new CallExpr("g", 5)), new LetExpr("g", &func2, new CallExpr("f", "g")));
+        CHECK(call9.interp()->equals(new NumVal(7)));
+        CHECK(call9.to_pretty_string() == "_let f = _fun (g) \n"
+                                          "           g(5)\n"
+                                          "_in  _let g = _fun (y) \n"
+                                          "                y + 2\n"
+                                          "     _in  f(g)");
+        LetExpr call10("f", new FunExpr("g", new CallExpr("g", 5)), new CallExpr("f", &func2));
+        CHECK(call10.interp()->equals(new NumVal(7)));
+        CHECK(call10.to_pretty_string() == "_let f = _fun (g) \n"
+                                           "           g(5)\n"
+                                           "_in  f(_fun (y) \n"
+                                           "         y + 2)");
+        LetExpr call11("f", new FunExpr("x", new FunExpr("y", new AddExpr("x", "y"))), new CallExpr(new CallExpr("f", 5), 1));
+        CHECK(call11.interp()->equals(new NumVal(6)));
+        LetExpr call12("y", new NumExpr(8), new LetExpr("f", new FunExpr("x", new MultExpr("x", "y")), new CallExpr("f", 2)));
+        CHECK(call12.interp()->equals(new NumVal(16)));
+        CHECK(call12.to_pretty_string() == "_let y = 8\n"
+                                           "_in  _let f = _fun (x) \n"
+                                           "                x * y\n"
+                                           "     _in  f(2)");
+        LetExpr call13("x", new NumExpr(8), new LetExpr("f", new FunExpr("x", new MultExpr("x", "x")), new CallExpr("f", 2)));
+        CHECK(call13.interp()->equals(new NumVal(4)));
+        CHECK(call13.to_pretty_string() == "_let x = 8\n"
+                                           "_in  _let f = _fun (x) \n"
+                                           "                x * x\n"
+                                           "     _in  f(2)");
+        LetExpr call14("f", new FunExpr("x", new AddExpr("x", "y")), new LetExpr("y", new NumExpr(10), new CallExpr("f", 1)));
+        CHECK(call14.interp()->equals(new NumVal(11)));
+        CHECK(call14.to_pretty_string() == "_let f = _fun (x) \n"
+                                           "           x + y\n"
+                                           "_in  _let y = 10\n"
+                                           "     _in  f(1)");
+        LetExpr call15("f", new FunExpr("x", new FunExpr("y", new AddExpr(new MultExpr("x", "x"), new MultExpr("y", "y")))), new CallExpr(new CallExpr("f", 2), 3));
+        CHECK(call15.interp()->equals(new NumVal(13)));
+        CHECK(call15.to_pretty_string() == "_let f = _fun (x) \n"
+                                           "           _fun (y) \n"
+                                           "             x * x + y * y\n"
+                                           "_in  f(2)(3)");
+        LetExpr call16("factrl", new FunExpr("factrl", new FunExpr("x", new IfExpr(new EqExpr("x", 1), new NumExpr(1), new MultExpr("x", new CallExpr(new CallExpr("factrl", "factrl"), new AddExpr("x", -1)))))), new CallExpr(new CallExpr("factrl", "factrl"), 10));
+        CHECK(call16.interp()->equals(new NumVal(3628800)));
+        CHECK(call16.to_pretty_string() == "_let factrl = _fun (factrl) \n"
+                                           "                _fun (x) \n"
+                                           "                  _if x == 1\n"
+                                           "                  _then 1\n"
+                                           "                  _else x * factrl(factrl)(x + -1)\n"
+                                           "_in  factrl(factrl)(10)");
     }
 }
