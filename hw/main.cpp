@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
                 std::string input;
                 std::getline(std::cin, input); // 从标准输入读取表达式
                 try {
-                    Expr* expr = parse_str(input); // 解析表达式
+                    PTR(Expr) expr = parse_str(input); // 解析表达式
                     std::string interp_str = expr->interp()->to_string();//让interp打印结果而不是地址
                     std::cout << interp_str << std::endl; // 执行并打印结果
                 } catch (const std::exception& e) {
@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
             {
                 std::string input;
                 std::getline(std::cin, input);
-                Expr* expr = parse_str(input); // 解析表达式
+                PTR(Expr) expr = parse_str(input); // 解析表达式
                 expr->print(std::cout); // 打印表达式
                 std::cout << std::endl;
             }
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
             {
                 std::string input;
                 std::getline(std::cin, input);
-                Expr* expr = parse_str(input); // 解析表达式
+                PTR(Expr) expr = parse_str(input); // 解析表达式
                 expr->pretty_print(std::cout); // 美化打印表达式
                 std::cout << std::endl;
             }
