@@ -18,7 +18,7 @@ return lhs;
 
 PTR(Expr) parse_comparg(std::istream& in) {
 PTR(Expr) lhs = parse_addend(in);
-skip_whitespace(in); // remove the white spaces after addend
+skip_whitespace(in);
 int c = in.peek();
 if (c == '+') {
 consume(in, '+');
@@ -128,6 +128,7 @@ return NEW(NumExpr) ((int) num);
 
 PTR(Expr) parse_let(std::istream& in) {
 std::string errorMsg = "wrong format for let expression";
+
 PTR(VarExpr) var = CAST(VarExpr) (parse_var(in));
 skip_whitespace(in);
 consume(in, '=', errorMsg);
@@ -135,7 +136,7 @@ PTR(Expr) rhs = parse_expr(in);
 skip_whitespace(in);
 consume(in, "_in", errorMsg);
 PTR(Expr) body = parse_expr(in);
-return NEW(LetExpr) (var->getVal(), rhs, body);
+return NEW(LetExpr) (var->to_string(), rhs, body);
 }
 
 PTR(Expr) parse_if(std::istream& in) {

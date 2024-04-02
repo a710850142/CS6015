@@ -6,6 +6,7 @@
 #include "pointer.h"
 
 class Val;
+class Env;
 
 enum precedence_t {
     prec_none,
@@ -16,17 +17,16 @@ enum precedence_t {
 
 
 CLASS(Expr) {
-        public:
-        virtual bool equals(PTR(Expr) expr)=0;
-        virtual PTR(Val) interp() = 0;
-        virtual PTR(Expr) subst(std::string s, PTR(Expr) expr) = 0;
-        virtual void print(std::ostream& out) = 0;
-        std::string to_string();
-        void pretty_print(std::ostream& out);
-        virtual void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) = 0;
-        std::string to_pretty_string();
+public:
+    virtual bool equals(PTR(Expr) expr)=0;
+    virtual PTR(Val) interp(PTR(Env) env) = 0;
+    virtual PTR(Expr) subst(std::string s, PTR(Expr) expr) = 0;
+    virtual void print(std::ostream& out) = 0;
+    std::string to_string();
+    void pretty_print(std::ostream& out);
+    virtual void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParenthesesToLet) = 0;
+    std::string to_pretty_string();
 };
-
 
 class NumExpr : public Expr {
 private:
@@ -34,7 +34,7 @@ private:
 public:
     NumExpr(int v);
     bool equals(PTR(Expr) expr) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -56,7 +56,7 @@ public:
     AddExpr(std::string left, PTR(Expr) right);
     AddExpr(PTR(Expr) left, std::string right);
     bool equals(PTR(Expr) expr) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -78,7 +78,7 @@ public:
     MultExpr(std::string left, PTR(Expr) right);
     MultExpr(PTR(Expr) left, std::string right);
     bool equals(PTR(Expr) expr) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -91,11 +91,10 @@ private:
 public:
     VarExpr(std::string s);
     bool equals(PTR(Expr) expr) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t prec, std::streampos& newLinePrevPos, bool addParen) override;
-    std::string getVal();
 };
 
 
@@ -107,7 +106,7 @@ private:
 public:
     LetExpr(std::string v, PTR(Expr) r, PTR(Expr) b);
     bool equals(PTR(Expr) expr) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -119,7 +118,7 @@ private:
 public:
     BoolExpr(bool v);
     bool equals(PTR(Expr) rhs) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -134,7 +133,7 @@ public:
     IfExpr(PTR(Expr) test, PTR(Expr) then, PTR(Expr) else_);
     IfExpr(bool test, PTR(Expr) then, PTR(Expr) else_);
     bool equals(PTR(Expr) rhs) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -149,7 +148,7 @@ public:
     EqExpr(int left, int right);
     EqExpr(std::string left, int right);
     bool equals(PTR(Expr) rhs_) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -162,7 +161,7 @@ private:
 public:
     FunExpr(std::string arg, PTR(Expr) expr);
     bool equals(PTR(Expr) rhs) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;
@@ -179,7 +178,7 @@ public:
     CallExpr(std::string funcName, PTR(Expr) arg);
     CallExpr(std::string funcName1, std::string funcName2);
     bool equals(PTR(Expr) rhs) override;
-    PTR(Val) interp() override;
+    PTR(Val) interp(PTR(Env) env) override;
     PTR(Expr) subst(std::string s, PTR(Expr) expr) override;
     void print(std::ostream& out) override;
     void pretty_print_at(std::ostream& out, precedence_t precedence, std::streampos& newLinePrevPos, bool addParen) override;

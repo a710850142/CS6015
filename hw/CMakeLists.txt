@@ -13,4 +13,6 @@ add_executable(msd main.cpp
         val.cpp
         val.h
         pointer.h
+        env.cpp
+        env.h
 )
